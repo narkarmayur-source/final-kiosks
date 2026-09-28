@@ -1,0 +1,2175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1015">
+  <title>Swasthya-Mitra | Digital 1000</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1015;
+      --surface: #111920;
+      --surface-raised: #172129;
+      --line: #283640;
+      --text: #edf4f5;
+      --muted: #91a1aa;
+      --accent: #53d6ae;
+      --accent-soft: rgba(83, 214, 174, .12);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--bg); color: var(--text); }
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      min-height: 76px; padding: 0 clamp(18px, 5vw, 72px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(11, 16, 21, .88); backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: max-content; }
+    .brand-mark { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(83,214,174,.3); border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .brand-name { font-size: 14px; font-weight: 700; letter-spacing: .01em; }
+    .brand-caption { margin-top: 3px; color: var(--muted); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .nav { display: flex; align-items: center; gap: 6px; padding: 5px; border: 1px solid var(--line); border-radius: 13px; background: #0d1419; }
+    .nav-button { display: inline-flex; align-items: center; gap: 9px; min-height: 40px; padding: 0 15px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: color .18s ease, background .18s ease, border-color .18s ease; }
+    .nav-button:hover { color: var(--text); background: rgba(255,255,255,.04); }
+    .nav-button[aria-selected="true"] { border-color: rgba(83,214,174,.2); background: var(--accent-soft); color: var(--accent); }
+    .nav-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .nav-icon { width: 16px; height: 16px; opacity: .9; }
+    .workspace { width: min(1440px, 100%); min-height: calc(100vh - 76px); margin: 0 auto; padding: clamp(28px, 5vw, 64px); }
+    .view { min-height: 55vh; }
+    .view[hidden] { display: none; }
+    .view-heading { display: flex; align-items: flex-start; gap: 18px; padding-bottom: 30px; border-bottom: 1px solid var(--line); }
+    .view-symbol { display: grid; width: 48px; height: 48px; flex: none; place-items: center; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); color: var(--accent); }
+    .view-symbol svg { width: 22px; height: 22px; }
+    h1 { margin: 1px 0 7px; font-size: clamp(24px, 3vw, 32px); font-weight: 650; letter-spacing: -.035em; }
+    .view-description { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .empty-surface { min-height: 310px; margin-top: 26px; border: 1px dashed #30414b; border-radius: 18px; background: linear-gradient(145deg, rgba(23,33,41,.55), rgba(17,25,32,.22)); }
+    .language-panel { max-width: 980px; margin: clamp(34px, 7vh, 68px) auto 0; text-align: center; }
+    #view-kiosk:has(#language-stage:not([hidden])) .view-heading { display: none; }
+    #view-kiosk:has(#language-stage:not([hidden])) { min-height: calc(100vh - 76px); display: flex; flex-direction: column; justify-content: center; }
+    #language-stage { width: 100%; }
+    #language-stage .language-panel { max-width: 1080px; margin: 0 auto; padding: clamp(24px, 4vh, 44px) 0; }
+    .language-grid { gap: 18px; }
+    .language-button { min-height: clamp(125px, 19vh, 190px); }
+    .language-eyebrow { margin: 0 0 12px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .language-title { margin: 0; font-size: clamp(28px, 4vw, 42px); font-weight: 650; letter-spacing: -.04em; }
+    .language-hint { margin: 10px 0 30px; color: var(--muted); font-size: 15px; }
+    .language-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .language-button { position: relative; display: flex; min-height: 120px; flex-direction: column; align-items: center; justify-content: center; gap: 9px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(155deg, #172129, #111920); color: var(--text); font: inherit; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+    .language-button:hover { transform: translateY(-2px); border-color: rgba(83,214,174,.55); background: linear-gradient(155deg, #1b2a30, #131d23); }
+    .language-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .language-native { font-size: 25px; font-weight: 650; letter-spacing: -.02em; }
+    .language-name { color: var(--muted); font-size: 13px; }
+    .audio-status { min-height: 24px; margin: 20px 0 0; color: var(--accent); font-size: 13px; }
+    .kiosk-stage[hidden] { display: none; }
+    .bp-panel { max-width: 860px; margin: clamp(32px, 6vh, 60px) auto 0; padding: clamp(24px, 5vw, 48px); border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.08), transparent 58%), var(--surface); text-align: center; }
+    .kiosk-dashboard { max-width: 1080px; margin: 30px auto 0; }
+    .kiosk-dashboard[hidden] { display: none; }
+    .kiosk-dashboard-title { margin: 0 0 18px; font-size: 22px; letter-spacing: -.03em; }
+    .diagnostic-card { display: flex; align-items: center; gap: 18px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(145deg, #172129, #111920); }
+    .diagnostic-icon { display: grid; width: 52px; height: 52px; flex: none; place-items: center; border: 1px solid rgba(83,214,174,.25); border-radius: 16px; background: var(--accent-soft); color: var(--accent); font-size: 22px; }
+    .diagnostic-info { flex: 1; }
+    .diagnostic-info h3 { margin: 0 0 5px; font-size: 16px; }
+    .price-tag { display: inline-block; margin-left: 8px; padding: 3px 8px; border: 1px solid rgba(83,214,174,.22); border-radius: 999px; background: rgba(83,214,174,.08); color: #8be5c4; font-size: 11px; font-weight: 700; vertical-align: middle; white-space: nowrap; }
+    .price-tag.free { border-color: rgba(83,214,174,.42); background: rgba(83,214,174,.16); color: #72e1b7; }
+    .diagnostic-result { margin-top: 7px !important; color: var(--accent) !important; }
+    .privacy-panel { max-width: 900px; margin: 30px auto; padding: clamp(22px, 4vw, 42px); border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.07), transparent 58%), var(--surface); }
+    .privacy-panel h2 { margin: 0 0 24px; font-size: clamp(23px, 3vw, 32px); line-height: 1.25; letter-spacing: -.03em; }
+    .privacy-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: privacy; }
+    .privacy-list li { padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.025); counter-increment: privacy; }
+    .privacy-list li strong { display: block; margin-bottom: 5px; color: var(--accent); }
+    .privacy-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+    .privacy-action { min-height: 58px; padding: 10px 18px; border: 1px solid rgba(83,214,174,.35); border-radius: 13px; background: #16765f; color: white; font: inherit; font-weight: 750; cursor: pointer; }
+    .privacy-action.secondary { border-color: var(--line); background: #172129; color: var(--text); }
+    .privacy-footnote { margin: 18px 0 0; color: var(--muted); text-align: center; font-size: 12px; }
+    .site-footer { padding: 18px clamp(18px, 5vw, 72px); border-top: 1px solid var(--line); color: var(--muted); text-align: center; font-size: 12px; }
+    .diagnostic-info p { margin: 0; color: var(--muted); font-size: 13px; }
+    .diagnostic-launch { min-height: 52px; padding: 0 20px; border: 1px solid rgba(83,214,174,.35); border-radius: 13px; background: #16765f; color: white; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .diagnostic-launch:hover { background: #1b9275; }
+    .diagnostic-launch:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .kiosk-dashboard-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .kiosk-dashboard-head .kiosk-dashboard-title { margin: 0; }
+    .network-toggle { display: inline-flex; align-items: center; gap: 9px; min-height: 42px; padding: 0 14px; border: 1px solid rgba(83,214,174,.3); border-radius: 12px; background: rgba(83,214,174,.1); color: #72e1b7; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+    .network-toggle::before { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 9px currentColor; content: ""; }
+    .network-toggle.offline { border-color: rgba(255,104,112,.38); background: rgba(255,76,86,.1); color: #ff858b; }
+    .network-toggle:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+    .diagnostic-stack { display: grid; gap: 14px; }
+    .diagnostic-stage[hidden] { display: none; }
+    .ppg-panel { max-width: 940px; margin: 28px auto 0; padding: clamp(22px, 4vw, 36px); border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.08), transparent 55%), var(--surface); }
+    .ppg-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .ppg-heading h2 { margin: 0; font-size: clamp(23px, 3vw, 30px); letter-spacing: -.035em; }
+    .ppg-heading p { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
+    .sensor-state { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+    .sensor-state::before { width: 7px; height: 7px; border-radius: 50%; background: #71818a; content: ""; }
+    .sensor-state.active { border-color: rgba(83,214,174,.25); color: var(--accent); }
+    .sensor-state.active::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .ppg-chart { position: relative; height: clamp(180px, 28vh, 260px); margin: 28px 0 20px; overflow: hidden; border: 1px solid #23343d; border-radius: 15px; background-color: #0b1318; background-image: linear-gradient(rgba(80,140,130,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(80,140,130,.08) 1px, transparent 1px); background-size: 24px 24px; }
+    .ppg-chart canvas { display: block; width: 100%; height: 100%; }
+    .ppg-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .ppg-metric { padding: 18px 20px; border: 1px solid var(--line); border-radius: 15px; background: #111a20; }
+    .ppg-metric-label { color: var(--muted); font-size: 12px; }
+    .ppg-metric-value { margin-top: 6px; font-size: clamp(27px, 4vw, 38px); font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -.04em; }
+    .ppg-metric-value.pending { color: #74838b; }
+    .ppg-actions { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+    .ppg-back { min-height: 54px; padding: 0 20px; border: 1px solid var(--line); border-radius: 13px; background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer; }
+    .ppg-back:hover { color: var(--text); border-color: #51616a; }
+    .temperature-stage[hidden] { display: none; }
+    .temperature-panel { max-width: 940px; margin: 28px auto 0; padding: clamp(22px, 4vw, 36px); border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(255,83,91,.07), transparent 55%), var(--surface); text-align: center; }
+    .temperature-art { position: relative; display: grid; width: min(100%, 520px); height: 260px; margin: 26px auto; place-items: center; overflow: hidden; border: 1px solid #293842; border-radius: 18px; background-color: #0b1318; background-image: linear-gradient(rgba(130,80,85,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(130,80,85,.07) 1px, transparent 1px); background-size: 24px 24px; }
+    .forehead-outline { width: 170px; height: 190px; color: #71818a; }
+    .infrared-beam { position: absolute; top: 16px; left: 8%; width: 84%; height: 2px; opacity: 0; background: #ff525e; box-shadow: 0 0 10px 3px rgba(255,82,94,.68); }
+    .temperature-stage.scanning .infrared-beam { opacity: 1; animation: infrared-scan 1.25s ease-in-out infinite alternate; }
+    .temperature-stage.scanning .forehead-outline { color: #b5c2c8; }
+    .temperature-stage.scanning .forehead-outline path.face { filter: drop-shadow(0 0 5px rgba(255,82,94,.18)); }
+    @keyframes infrared-scan { from { transform: translateY(0); } to { transform: translateY(220px); } }
+    .temperature-readout { min-height: 68px; margin: 10px 0 22px; color: var(--text); font-size: clamp(46px, 8vw, 68px); font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -.055em; }
+    .temperature-readout.pending { color: #74838b; }
+    .temperature-units { color: var(--muted); font-size: 15px; letter-spacing: 0; }
+    .temperature-actions { display: flex; justify-content: center; gap: 12px; }
+    .ecg-modal-backdrop { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: clamp(12px, 3vw, 32px); background: rgba(1,5,7,.86); backdrop-filter: blur(10px); }
+    .ecg-modal-backdrop[hidden] { display: none; }
+    .ecg-modal { width: min(1120px, 100%); padding: clamp(18px, 3vw, 30px); border: 1px solid #29433c; border-radius: 22px; background: #0b1113; box-shadow: 0 30px 120px rgba(0,0,0,.64); }
+    .ecg-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .ecg-modal-header h2 { margin: 0; color: #e9f5ef; font-size: clamp(22px, 3vw, 30px); letter-spacing: -.035em; }
+    .ecg-modal-header p { margin: 6px 0 0; color: #879994; font-size: 13px; }
+    .ecg-live-indicator { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid rgba(89,235,157,.2); border-radius: 999px; color: #8debb3; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .ecg-live-indicator::before { width: 7px; height: 7px; border-radius: 50%; background: #58e895; box-shadow: 0 0 10px #58e895; content: ""; animation: ecg-live 1s ease-in-out infinite alternate; }
+    @keyframes ecg-live { to { opacity: .35; } }
+    .ecg-screen { height: clamp(230px, 40vh, 390px); overflow: hidden; border: 1px solid #274038; border-radius: 12px; background: #020605; box-shadow: inset 0 0 36px rgba(0,0,0,.8); }
+    .ecg-screen canvas { display: block; width: 100%; height: 100%; }
+    .ecg-telemetry { margin: 14px 0 0; color: #77dc9f; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; letter-spacing: .015em; }
+    .ecg-modal-footer { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .ecg-stop { min-width: 128px; min-height: 50px; padding: 0 20px; border: 1px solid rgba(255,103,112,.4); border-radius: 13px; background: #4b2025; color: #ffd9db; font: inherit; font-weight: 700; cursor: pointer; }
+    .ecg-stop:hover { background: #65272d; }
+    .ecg-stop:focus-visible { outline: 3px solid #ff858b; outline-offset: 3px; }
+    .emergency-launch-row { display: flex; justify-content: flex-end; margin: 4px 0 18px; }
+    .emergency-launch { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 22px; border: 1px solid rgba(255,107,115,.48); border-radius: 14px; background: linear-gradient(135deg, #a82e36, #721e27); box-shadow: 0 8px 28px rgba(151,31,42,.26); color: #fff5f5; font: inherit; font-size: 15px; font-weight: 750; cursor: pointer; }
+    .emergency-launch:hover { background: linear-gradient(135deg, #c13b43, #8e252e); }
+    .emergency-launch:focus-visible { outline: 3px solid #ff9398; outline-offset: 3px; }
+    .emergency-modal-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; overflow-y: auto; padding: 18px; background: rgba(22,2,5,.96); animation: emergency-flash 1.25s steps(2, end) infinite; }
+    .emergency-modal-backdrop[hidden] { display: none; }
+    @keyframes emergency-flash { 0%, 100% { box-shadow: inset 0 0 0 0 rgba(255,28,42,.8); } 50% { box-shadow: inset 0 0 0 9px rgba(255,28,42,.6); } }
+    .emergency-modal { width: min(980px, 100%); margin: auto; padding: clamp(20px, 4vw, 38px); border: 1px solid #fb5961; border-radius: 20px; background: linear-gradient(145deg, #281114, #170d10 68%); box-shadow: 0 0 65px rgba(220,30,43,.22); color: #fff3f3; }
+    .emergency-alert { display: flex; align-items: center; gap: 15px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,111,119,.28); }
+    .emergency-alert-icon { display: grid; width: 54px; height: 54px; flex: none; place-items: center; border: 1px solid rgba(255,135,141,.4); border-radius: 16px; background: rgba(255,60,73,.16); color: #ff7a82; font-size: 28px; font-weight: 800; }
+    .emergency-alert h2 { margin: 0; color: #ff737b; font-size: clamp(20px, 3.3vw, 32px); font-weight: 850; letter-spacing: -.035em; line-height: 1.2; }
+    .emergency-alert p { margin: 7px 0 0; color: #e7b9bb; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .emergency-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; margin-top: 20px; }
+    .emergency-card { min-width: 0; padding: 17px; border: 1px solid rgba(255,116,123,.22); border-radius: 15px; background: rgba(9,9,11,.55); }
+    .emergency-card h3 { margin: 0 0 14px; color: #ffdfe0; font-size: 14px; font-weight: 700; }
+    .doctor-feed { position: relative; display: grid; min-height: 250px; place-items: center; overflow: hidden; border: 1px solid rgba(255,108,118,.22); border-radius: 12px; background: radial-gradient(ellipse at 50% 35%, #3e2529 0, #191317 48%, #09090b 100%); }
+    .doctor-feed::before, .doctor-feed::after { position: absolute; width: 260px; height: 260px; border: 1px solid rgba(255,100,111,.13); border-radius: 50%; content: ""; animation: doctor-pulse 2.2s ease-out infinite; }
+    .doctor-feed::after { animation-delay: 1.1s; }
+    @keyframes doctor-pulse { from { transform: scale(.35); opacity: .75; } to { transform: scale(1.35); opacity: 0; } }
+    .doctor-avatar { position: relative; z-index: 1; display: grid; width: 104px; height: 104px; place-items: center; border: 2px solid rgba(255,158,162,.72); border-radius: 50%; background: linear-gradient(155deg, #8d5456, #493034); box-shadow: 0 0 34px rgba(255,86,97,.22); color: #ffe9e9; font-size: 31px; font-weight: 750; }
+    .doctor-video-label { position: absolute; right: 12px; bottom: 12px; left: 12px; z-index: 2; display: flex; align-items: center; gap: 8px; color: #ffe9e9; font-size: 12px; font-weight: 650; }
+    .connecting-dot { width: 7px; height: 7px; border-radius: 50%; background: #ff6e77; box-shadow: 0 0 10px #ff6e77; animation: ecg-live 1s ease-in-out infinite alternate; }
+    .emergency-status { margin: 12px 0 0; color: #ffadb1; font-size: 12px; }
+    .gps-map { position: relative; display: grid; min-height: 138px; margin: 0 0 14px; place-items: center; overflow: hidden; border: 1px solid rgba(255,108,118,.18); border-radius: 11px; background-color: #111416; background-image: linear-gradient(rgba(228,85,93,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(228,85,93,.1) 1px, transparent 1px); background-size: 22px 22px; }
+    .gps-pin { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid rgba(255,101,112,.45); border-radius: 50%; background: rgba(215,52,64,.2); color: #ff7b83; font-size: 18px; }
+    .gps-readout { display: flex; justify-content: space-between; gap: 8px; padding: 11px 0; border-bottom: 1px solid rgba(255,116,123,.13); color: #e6c9ca; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .ambulance-status { display: flex; align-items: center; gap: 9px; margin-top: 14px; color: #ff969d; font-size: 12px; font-weight: 750; }
+    .ambulance-status::before { width: 8px; height: 8px; border-radius: 50%; background: #ff4f59; box-shadow: 0 0 12px #ff4f59; content: ""; }
+    .emergency-return-row { display: flex; justify-content: flex-end; margin-top: 20px; }
+    .emergency-return { min-height: 54px; padding: 0 22px; border: 1px solid rgba(255,190,193,.35); border-radius: 13px; background: #f1e5e5; color: #371417; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .emergency-return:hover { background: white; }
+    .emergency-return:focus-visible { outline: 3px solid #ff7c84; outline-offset: 3px; }
+    .vision-modal-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; overflow-y: auto; padding: 18px; background: rgba(2,7,9,.88); backdrop-filter: blur(10px); }
+    .vision-modal-backdrop[hidden] { display: none; }
+    .vision-modal { width: min(760px, 100%); max-height: min(92vh, 900px); overflow-y: auto; padding: clamp(20px, 4vw, 34px); border: 1px solid #30434b; border-radius: 22px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.08), transparent 52%), #111920; box-shadow: 0 28px 100px rgba(0,0,0,.55); }
+    .vision-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .vision-header h2 { margin: 0; font-size: clamp(22px, 3vw, 28px); letter-spacing: -.035em; }
+    .vision-header p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .vision-camera { position: relative; display: grid; min-height: 280px; place-items: center; overflow: hidden; border: 1px solid #30414b; border-radius: 15px; background: radial-gradient(ellipse at 50% 44%, #2f3b3b, #172126 54%, #0b1115 100%); }
+    .vision-camera::before { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,.13) 5px 6px); content: ""; pointer-events: none; }
+    .camera-frame { position: absolute; inset: 25px; border: 1px solid rgba(83,214,174,.36); border-radius: 12px; animation: camera-frame 2.4s ease-in-out infinite alternate; }
+    @keyframes camera-frame { from { opacity: .5; transform: scale(.985); } to { opacity: 1; transform: scale(1); } }
+    .camera-frame::before, .camera-frame::after { position: absolute; width: 28px; height: 28px; border-color: var(--accent); border-style: solid; content: ""; }
+    .camera-frame::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 8px 0 0; }
+    .camera-frame::after { right: -1px; bottom: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 8px; }
+    .camera-person { width: 124px; height: 154px; color: rgba(206,222,218,.76); filter: drop-shadow(0 8px 16px rgba(0,0,0,.25)); }
+    .camera-scanline { position: absolute; right: 28px; left: 28px; top: 32px; height: 2px; background: var(--accent); box-shadow: 0 0 13px 3px rgba(83,214,174,.5); animation: camera-scan 3.3s ease-in-out infinite alternate; }
+    @keyframes camera-scan { to { transform: translateY(208px); } }
+    .camera-caption { position: absolute; right: 18px; bottom: 15px; left: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #dae5e4; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .camera-live { display: inline-flex; align-items: center; gap: 7px; color: #86e9b4; }
+    .camera-live::before { width: 7px; height: 7px; border-radius: 50%; background: #53d6ae; box-shadow: 0 0 9px #53d6ae; content: ""; }
+    .vision-progress { display: none; min-height: 118px; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--accent); font-size: 14px; font-weight: 700; }
+    .vision-modal.analyzing .vision-camera { display: none; }
+    .vision-modal.analyzing .vision-progress { display: flex; }
+    .vision-spinner { width: 38px; height: 38px; border: 3px solid rgba(83,214,174,.18); border-top-color: var(--accent); border-radius: 50%; animation: vision-spin .8s linear infinite; }
+    @keyframes vision-spin { to { transform: rotate(360deg); } }
+    .vision-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+    .vision-results[hidden] { display: none; }
+    .vision-result { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid rgba(83,214,174,.24); border-radius: 14px; background: rgba(32,113,82,.12); }
+    .vision-check { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border-radius: 50%; background: rgba(83,214,174,.16); color: #70e3a8; font-size: 20px; font-weight: 800; }
+    .vision-result h3 { margin: 0; font-size: 13px; line-height: 1.4; }
+    .vision-result p { margin: 4px 0 0; color: #7de0a9; font-size: 12px; font-weight: 700; }
+    .vision-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .vision-action { min-height: 50px; padding: 0 20px; border: 1px solid var(--line); border-radius: 13px; background: #172129; color: var(--text); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .vision-action.primary { border-color: rgba(83,214,174,.35); background: #16765f; color: white; }
+    .vision-action:hover { filter: brightness(1.14); }
+    .vision-action:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .vision-action[hidden] { display: none; }
+    .teleconsult-backdrop { position: fixed; inset: 0; z-index: 55; display: grid; place-items: stretch; padding: clamp(12px, 2vw, 24px); background: #070b0e; }
+    .teleconsult-backdrop[hidden] { display: none; }
+    .teleconsult-layout { display: grid; width: min(1600px, 100%); height: 100%; min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); gap: 16px; margin: 0 auto; }
+    .call-stage { position: relative; display: grid; min-width: 0; place-items: center; overflow: hidden; border: 1px solid #25343a; border-radius: 20px; background: radial-gradient(ellipse at 50% 37%, #243238 0, #141d22 40%, #0b1114 76%); }
+    .call-stage::before { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(83,214,174,.025), transparent 42%, rgba(83,214,174,.018)); content: ""; }
+    .doctor-call-avatar { position: relative; z-index: 1; display: grid; width: clamp(118px, 19vw, 210px); aspect-ratio: 1; place-items: center; border: 2px solid rgba(110,237,181,.72); border-radius: 50%; background: linear-gradient(150deg, #45665c, #20352f 70%); box-shadow: 0 0 0 14px rgba(83,214,174,.05), 0 0 70px rgba(83,214,174,.19); color: #e3fff1; font-size: clamp(36px, 6vw, 68px); font-weight: 750; animation: call-pulse 2.4s ease-in-out infinite; }
+    @keyframes call-pulse { 50% { box-shadow: 0 0 0 26px rgba(83,214,174,.025), 0 0 94px rgba(83,214,174,.3); } }
+    .call-doctor-label { position: absolute; z-index: 2; top: 22px; left: 24px; color: #e9f1f1; font-size: 14px; font-weight: 650; }
+    .call-connected { position: absolute; top: 18px; right: 20px; display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid rgba(83,214,174,.22); border-radius: 999px; background: rgba(23,46,39,.78); color: #79e3ae; font-size: 11px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+    .call-connected::before { width: 7px; height: 7px; border-radius: 50%; background: #62e79e; box-shadow: 0 0 10px #62e79e; content: ""; }
+    .patient-pip { position: absolute; z-index: 3; right: 20px; bottom: 20px; display: grid; width: clamp(132px, 22vw, 210px); aspect-ratio: 4 / 3; place-items: center; overflow: hidden; border: 1px solid #46565c; border-radius: 15px; background: radial-gradient(ellipse at 50% 40%, #354349, #11191d 75%); box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+    .patient-pip::before { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,.05); border-radius: inherit; content: ""; animation: call-pulse 2.1s ease-in-out infinite; }
+    .patient-pip-avatar { display: grid; width: 52px; aspect-ratio: 1; place-items: center; border: 1px solid rgba(185,215,218,.55); border-radius: 50%; background: #35494c; color: #d7e6e6; font-size: 19px; font-weight: 700; }
+    .patient-pip-label { position: absolute; right: 0; bottom: 0; left: 0; padding: 8px 10px; background: rgba(4,8,10,.72); color: #edf4f4; font-size: 11px; font-weight: 650; }
+    .call-telemetry { display: flex; min-height: 0; flex-direction: column; padding: 22px; border: 1px solid #25343a; border-radius: 20px; background: #11191d; }
+    .call-telemetry h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+    .call-telemetry-intro { margin: 6px 0 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .call-metric { padding: 15px 0; border-top: 1px solid #26343a; }
+    .call-metric-label { color: #9babb0; font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+    .call-metric-value { margin-top: 5px; color: #edfaf2; font-size: 27px; font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -.04em; }
+    .call-metric-value small { color: #9babb0; font-size: 12px; font-weight: 500; letter-spacing: 0; }
+    .consultation-end-row { display: flex; justify-content: center; margin-top: auto; padding-top: 20px; }
+    .consultation-end { width: 100%; min-height: 54px; border: 1px solid rgba(255,106,115,.38); border-radius: 14px; background: #a83139; color: white; font: inherit; font-size: 14px; font-weight: 750; cursor: pointer; }
+    .consultation-end:hover { background: #c53b44; }
+    .consultation-end:focus-visible { outline: 3px solid #ff858b; outline-offset: 3px; }
+    .dispenser-backdrop { position: fixed; inset: 0; z-index: 56; display: grid; place-items: center; overflow-y: auto; padding: 18px; background: rgba(2,6,8,.88); backdrop-filter: blur(10px); }
+    .dispenser-backdrop[hidden] { display: none; }
+    .dispenser-modal { width: min(1240px, 100%); max-height: 94vh; overflow-y: auto; padding: clamp(20px, 3vw, 32px); border: 1px solid #304149; border-radius: 22px; background: #11191e; box-shadow: 0 28px 100px rgba(0,0,0,.56); }
+    .dispenser-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; margin-bottom: 22px; }
+    .dispenser-header h2 { margin: 0; font-size: clamp(22px, 3vw, 29px); letter-spacing: -.035em; }
+    .dispenser-header p { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .dispenser-close { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border: 1px solid var(--line); border-radius: 12px; background: #172129; color: var(--muted); font: inherit; font-size: 22px; cursor: pointer; }
+    .dispenser-close:hover { color: var(--text); }
+    .dispenser-close:focus-visible, .otp-key:focus-visible, .otp-autofill:focus-visible, .verify-dispense:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .dispenser-columns { display: grid; grid-template-columns: 1.12fr .95fr .95fr; gap: 14px; }
+    .dispenser-section { min-width: 0; padding: 19px; border: 1px solid var(--line); border-radius: 16px; background: #0e161b; }
+    .dispenser-section h3 { margin: 0 0 16px; font-size: 14px; font-weight: 750; letter-spacing: .02em; }
+    .auth-person { margin: 0 0 12px; color: #e9f1f2; font-size: 14px; font-weight: 650; line-height: 1.5; }
+    .signed-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 9px; border: 1px solid rgba(83,214,174,.25); border-radius: 999px; background: rgba(83,214,174,.1); color: #69dfad; font-size: 10px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .signed-badge::before { content: "✓"; font-size: 12px; }
+    .medicine-list { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
+    .medicine-list li { padding: 12px; border: 1px solid #26343a; border-radius: 11px; background: #141e23; color: #e3ecee; font-size: 12px; line-height: 1.5; }
+    .medicine-list strong { display: block; margin-bottom: 3px; color: #a9b9be; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; letter-spacing: .02em; }
+    .cosign-state { min-height: 72px; display: flex; align-items: center; padding: 12px; border: 1px solid #29373d; border-radius: 12px; background: #131d22; color: #dce6e8; font-size: 13px; font-weight: 650; line-height: 1.5; }
+    .cosign-state.approved { border-color: rgba(88,166,255,.3); background: rgba(52,116,183,.11); color: #8cc7ff; }
+    .cosign-countdown { margin: 16px 0 0; color: var(--muted); font-size: 12px; }
+    .cosign-countdown strong { color: #f4c879; font-variant-numeric: tabular-nums; font-size: 16px; }
+    .otp-display { display: flex; justify-content: center; gap: 7px; margin: 16px 0; }
+    .otp-digit { display: grid; width: 36px; height: 44px; place-items: center; border: 1px solid #304149; border-radius: 9px; background: #141d22; color: #edf4f5; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 18px; font-weight: 750; }
+    .otp-keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    .otp-key { min-height: 40px; border: 1px solid #2c3c43; border-radius: 9px; background: #172229; color: #eaf1f2; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer; }
+    .otp-key:hover { border-color: rgba(83,214,174,.4); background: #1b2a30; }
+    .otp-autofill { width: 100%; margin-top: 10px; padding: 8px 5px; border: 0; background: transparent; color: #7fc7ff; font: inherit; font-size: 11px; font-weight: 650; cursor: pointer; }
+    .dispenser-footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 20px; }
+    .dispense-success { margin: 0; color: #70e2ac; font-size: 13px; font-weight: 750; letter-spacing: .035em; }
+    .dispense-success[hidden] { display: none; }
+    .verify-dispense { min-height: 52px; padding: 0 22px; border: 1px solid rgba(83,214,174,.35); border-radius: 13px; background: #16765f; color: white; font: inherit; font-size: 14px; font-weight: 750; cursor: pointer; }
+    .verify-dispense:hover:not(:disabled) { background: #1b9275; }
+    .verify-dispense:disabled { cursor: not-allowed; opacity: .4; }
+    .dispenser-auth-content[hidden], .dispense-sequence[hidden] { display: none; }
+    .dispense-sequence { min-height: min(62vh, 590px); padding: clamp(22px, 4vw, 42px); border: 1px solid #2a3b42; border-radius: 17px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.06), transparent 55%), #0b1216; text-align: center; }
+    .dispense-sequence-title { margin: 0; color: #eaf3f3; font-size: clamp(21px, 3vw, 29px); letter-spacing: -.03em; }
+    .dispense-sequence-copy { min-height: 48px; margin: 12px auto 22px; color: #c5d1d3; font-size: 14px; line-height: 1.55; }
+    .dispense-visual { position: relative; display: grid; width: min(100%, 600px); height: 285px; margin: 0 auto; place-items: center; overflow: hidden; border: 1px solid #263940; border-radius: 15px; background-color: #070d10; background-image: linear-gradient(rgba(83,214,174,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(83,214,174,.06) 1px, transparent 1px); background-size: 22px 22px; }
+    .coil-assembly { position: relative; width: 220px; height: 130px; transform-style: preserve-3d; animation: coil-rotate 2s linear infinite; }
+    .coil-spindle { position: absolute; top: 13px; left: 50%; width: 18px; height: 104px; transform: translateX(-50%); border: 1px solid #9babb0; border-radius: 8px; background: linear-gradient(90deg,#53636a,#e0e7e8 45%,#718087); box-shadow: 0 0 25px rgba(83,214,174,.1); }
+    .coil-helix { position: absolute; top: 10px; left: 50%; width: 120px; height: 110px; transform: translateX(-50%); }
+    .coil-helix path { fill: none; stroke: #53d6ae; stroke-width: 5; filter: drop-shadow(0 0 5px rgba(83,214,174,.5)); }
+    @keyframes coil-rotate { to { transform: rotateY(360deg) rotateZ(360deg); } }
+    .stallguard .coil-assembly { animation: coil-reverse .65s ease-out 2; }
+    @keyframes coil-reverse { from { transform: rotateY(0) rotateZ(0); } to { transform: rotateY(-60deg) rotateZ(-60deg); } }
+    .motor-label { position: absolute; right: 12px; bottom: 12px; left: 12px; color: #9cccb2; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11px; letter-spacing: .04em; }
+    .stallguard-alert { color: #ffad74 !important; }
+    .laser-tray { position: relative; width: min(78%, 390px); height: 118px; margin-top: 78px; border: 3px solid #80949b; border-top: 0; border-radius: 0 0 16px 16px; background: linear-gradient(180deg, rgba(93,110,117,.12), rgba(93,110,117,.03)); box-shadow: inset 0 -10px 18px rgba(132,154,161,.09); }
+    .laser-beam { position: absolute; top: 2px; right: -20px; left: -20px; height: 3px; background: #ff343e; box-shadow: 0 0 12px 4px rgba(255,52,62,.7); animation: laser-pulse .5s ease-in-out infinite alternate; }
+    @keyframes laser-pulse { to { opacity: .38; } }
+    .blister-pack { position: absolute; top: -84px; left: calc(50% - 25px); display: grid; width: 50px; height: 72px; place-items: center; border: 1px solid #ccd8db; border-radius: 7px; background: linear-gradient(145deg, #e7eeee, #99a9ac); box-shadow: 0 5px 15px rgba(0,0,0,.45); color: #405258; font-size: 18px; font-weight: 800; }
+    .dropping .blister-pack { animation: blister-drop .72s cubic-bezier(.35,.1,.55,1) both; }
+    @keyframes blister-drop { 0% { transform: translateY(-30px) rotate(-8deg); } 70% { transform: translateY(84px) rotate(5deg); } 88% { transform: translateY(72px) rotate(-2deg); } 100% { transform: translateY(78px); } }
+    .dispense-success-panel { display: grid; min-height: 245px; place-content: center; gap: 14px; }
+    .dispense-success-panel[hidden], .dispense-visual[hidden] { display: none; }
+    .dispense-success-icon { display: grid; width: 68px; height: 68px; margin: 0 auto; place-items: center; border: 1px solid rgba(83,214,174,.35); border-radius: 50%; background: rgba(83,214,174,.13); color: #73e5ad; font-size: 36px; }
+    .dispense-success-copy { margin: 0; color: #83e8b2; font-size: clamp(17px, 2.5vw, 22px); font-weight: 700; line-height: 1.45; }
+    .return-dashboard { min-height: 50px; padding: 0 20px; border: 1px solid rgba(83,214,174,.35); border-radius: 13px; background: #16765f; color: white; font: inherit; font-weight: 750; cursor: pointer; }
+    .return-dashboard:hover { background: #1b9275; }
+    .phone-stage { display: grid; min-height: calc(100vh - 210px); place-items: center; padding: 8px 0; }
+    .phone-frame { position: relative; width: min(410px, 100%); height: min(820px, calc(100vh - 150px)); min-height: 590px; padding: 10px; border: 1px solid #4b555a; border-radius: 53px; background: linear-gradient(145deg, #303a3f, #101518 28%, #252e32 75%, #090c0e); box-shadow: 0 35px 100px rgba(0,0,0,.58), inset 0 0 0 2px rgba(255,255,255,.04); }
+    .phone-frame::before { position: absolute; top: 150px; left: -3px; width: 3px; height: 72px; border-radius: 3px 0 0 3px; background: #626d72; content: ""; }
+    .phone-frame::after { position: absolute; top: 202px; right: -3px; width: 3px; height: 92px; border-radius: 0 3px 3px 0; background: #626d72; content: ""; }
+    .phone-screen { position: relative; display: flex; width: 100%; height: 100%; flex-direction: column; overflow: hidden; border: 1px solid #050809; border-radius: 43px; background: #f4f7f5; color: #14221f; }
+    .phone-statusbar { position: relative; z-index: 2; display: flex; height: 47px; flex: none; align-items: center; justify-content: space-between; padding: 8px 24px 0; color: #14221f; font-size: 11px; font-weight: 750; }
+    .phone-notch { position: absolute; top: 8px; left: 50%; width: 112px; height: 27px; transform: translateX(-50%); border-radius: 16px; background: #080b0c; }
+    .phone-system-icons { display: inline-flex; align-items: center; gap: 5px; }
+    .phone-system-icons svg { width: 14px; height: 14px; }
+    .phone-app-head { padding: 12px 22px 18px; }
+    .phone-app-overline { margin: 0 0 5px; color: #518b74; font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .phone-app-head h1 { margin: 0; color: #14221f; font-size: 22px; font-weight: 750; letter-spacing: -.04em; }
+    .phone-app-head p:last-child { margin: 5px 0 0; color: #788781; font-size: 11px; }
+    .phone-content { min-height: 0; flex: 1; overflow-y: auto; padding: 0 16px 18px; scrollbar-width: thin; scrollbar-color: #c1d1c9 transparent; }
+    .family-profile { position: relative; display: flex; align-items: center; gap: 13px; padding: 16px; border: 1px solid #dbe6df; border-radius: 18px; background: linear-gradient(135deg, #fff, #edf5f0); box-shadow: 0 7px 20px rgba(28,61,45,.05); }
+    .family-avatar { display: grid; width: 52px; height: 52px; flex: none; place-items: center; border-radius: 17px; background: #cde8d8; color: #2c8057; font-size: 19px; font-weight: 800; }
+    .family-profile h2 { margin: 0; color: #1b2a24; font-size: 15px; font-weight: 750; }
+    .family-profile p { margin: 5px 0 0; color: #718079; font-size: 10px; line-height: 1.5; }
+    .family-section-title { margin: 21px 2px 10px; color: #25362e; font-size: 13px; font-weight: 750; }
+    .stable-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 999px; background: #e2f5e9; color: #21824f; font-size: 10px; font-weight: 800; }
+    .stable-badge::before { width: 6px; height: 6px; border-radius: 50%; background: #38b76b; content: ""; }
+    .vitals-sync-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 22px 2px 10px; }
+    .vitals-sync-head .family-section-title { margin: 0; }
+    .sync-caption { color: #7d8c85; font-size: 9px; }
+    .mobile-vitals { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+    .mobile-vital { padding: 12px; border: 1px solid #dce6df; border-radius: 14px; background: #fff; }
+    .mobile-vital-label { color: #84918b; font-size: 9px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .mobile-vital-value { margin-top: 6px; color: #1c2d25; font-size: 20px; font-variant-numeric: tabular-nums; font-weight: 750; letter-spacing: -.04em; }
+    .mobile-vital-value small { color: #75827b; font-size: 10px; font-weight: 600; letter-spacing: 0; }
+    .wallet-card { margin-top: 15px; padding: 16px; border: 1px solid #cfe2d6; border-radius: 18px; background: linear-gradient(135deg, #e8f6ed, #f8fbf8); }
+    .wallet-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .wallet-label { margin: 0; color: #628170; font-size: 10px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .wallet-balance { margin: 5px 0 0; color: #1c5035; font-size: 28px; font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: -.05em; }
+    .wallet-icon { display: grid; width: 39px; height: 39px; place-items: center; border-radius: 13px; background: #d0edd9; color: #358456; font-size: 18px; }
+    .wallet-recharge { width: 100%; min-height: 43px; margin-top: 14px; border: 0; border-radius: 12px; background: #217c4a; color: white; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+    .wallet-recharge:hover { background: #1b693f; }
+    .wallet-recharge:focus-visible, .recharge-option:focus-visible, .recharge-close:focus-visible { outline: 3px solid #48a96e; outline-offset: 3px; }
+    .phone-tabs { display: grid; height: 68px; flex: none; grid-template-columns: repeat(4,1fr); align-items: center; border-top: 1px solid #e1e9e3; background: rgba(255,255,255,.94); }
+    .phone-tab { display: flex; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; background: transparent; color: #89958e; font: inherit; font-size: 9px; font-weight: 650; cursor: pointer; }
+    .phone-tab svg { width: 19px; height: 19px; }
+    .phone-tab.active { color: #258353; }
+    .phone-home-indicator { width: 100px; height: 4px; flex: none; align-self: center; margin: 6px 0 7px; border-radius: 5px; background: #1e2823; }
+    .recharge-overlay { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 18px; background: rgba(13,27,20,.52); backdrop-filter: blur(4px); }
+    .recharge-overlay[hidden] { display: none; }
+    .recharge-modal { width: 100%; padding: 21px; border: 1px solid #dce7df; border-radius: 21px; background: #fff; box-shadow: 0 22px 55px rgba(12,34,21,.25); }
+    .recharge-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .recharge-modal h2 { margin: 0; color: #1c2d25; font-size: 19px; letter-spacing: -.03em; }
+    .recharge-modal p { margin: 6px 0 16px; color: #788781; font-size: 11px; line-height: 1.45; }
+    .recharge-close { display: grid; width: 33px; height: 33px; flex: none; place-items: center; border: 1px solid #e0e8e2; border-radius: 10px; background: #f8faf8; color: #6c7c72; font: inherit; font-size: 19px; cursor: pointer; }
+    .recharge-options { display: grid; gap: 9px; }
+    .recharge-option { display: flex; align-items: center; gap: 11px; min-height: 57px; padding: 0 13px; border: 1px solid #dfe9e2; border-radius: 13px; background: #fbfdfb; color: #1e3026; text-align: left; font: inherit; cursor: pointer; }
+    .recharge-option:hover:not(:disabled) { border-color: #66b985; background: #f1faf4; }
+    .recharge-option:disabled { cursor: wait; opacity: .6; }
+    .payment-mark { display: grid; width: 34px; height: 34px; flex: none; place-items: center; border-radius: 11px; background: #eff3f0; color: #42785a; font-size: 11px; font-weight: 850; }
+    .payment-name { flex: 1; font-size: 12px; font-weight: 750; }
+    .payment-amount { color: #235c39; font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 800; }
+    .recharge-state { min-height: 18px; margin: 12px 0 0 !important; color: #288550 !important; font-size: 10px !important; font-weight: 700; }
+    .claim-card { margin-top: 14px; padding: 15px; border: 1px solid #dce6df; border-radius: 17px; background: #fff; }
+    .claim-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .claim-heading h2 { margin: 0; color: #25362e; font-size: 13px; font-weight: 800; }
+    .claim-active { padding: 5px 7px; border-radius: 999px; background: #e6f6eb; color: #27804c; font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .claim-medicine { margin: 12px 0 0; color: #203128; font-size: 12px; font-weight: 750; }
+    .claim-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 5px; color: #829087; font-size: 9px; }
+    .claim-countdown { color: #ae7424; font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 800; }
+    .claim-token { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding-top: 13px; border-top: 1px solid #edf1ee; }
+    .claim-qr { width: 76px; height: 76px; flex: none; padding: 5px; border: 1px solid #e2e9e4; border-radius: 8px; background: white; color: #18251e; }
+    .claim-otp-label { margin: 0; color: #8a968e; font-size: 9px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; }
+    .claim-otp { margin: 5px 0 0; color: #1c3426; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 25px; font-weight: 850; letter-spacing: .12em; }
+    .claim-pickup-hint { margin: 5px 0 0; color: #89958e; font-size: 9px; line-height: 1.4; }
+    .ble-footer { flex: none; padding: 10px 14px; border-top: 1px solid #e1e9e3; background: #f8fbf8; }
+    .phone-page[hidden] { display: none; }
+    .phone-page { padding-bottom: 12px; }
+    .offline-card, .consult-card { margin-top: 14px; padding: 16px; border: 1px solid #dce6df; border-radius: 17px; background: #fff; }
+    .phone-page-title { margin: 4px 0 12px; color: #25362e; font-size: 18px; font-weight: 800; }
+    .ble-footer { border: 1px solid #e1e9e3; border-radius: 14px; }
+    .ble-icon { width: 20px; height: 20px; color: #7b8a80; }
+    .ble-status { display: flex; align-items: center; gap: 8px; min-height: 34px; color: #75827b; font-size: 12px; }
+    .ble-status.active { color: #258353; }
+    .ble-status.active .ble-icon { color: #258353; animation: ble-pulse 1s ease-in-out infinite; }
+    @keyframes ble-pulse { 50% { opacity: .4; transform: scale(1.12); } }
+    .consult-primary, .consult-action { width: 100%; min-height: 50px; margin-top: 10px; border: 0; border-radius: 13px; background: #217c4a; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+    .consult-card h3 { margin: 0; color: #203128; font-size: 15px; }
+    .consult-card p { color: #718079; font-size: 12px; line-height: 1.5; }
+    .consult-price { color: #1c5035 !important; font-size: 22px !important; font-weight: 850; }
+    .consult-modal-overlay { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; padding: 18px; background: rgba(13,27,20,.7); }
+    .consult-modal-overlay[hidden] { display:none; }
+    .consult-modal { width: 100%; padding: 22px 17px; border-radius: 20px; background: #fff; color: #203128; text-align: center; }
+    .doctor-avatar { display:grid; width:100px; height:100px; margin:18px auto; place-items:center; border-radius:50%; background:linear-gradient(140deg,#cde8d8,#79bd91); color:#217c4a; font-size:42px; animation: ble-pulse 1.5s ease-in-out infinite; }
+    .connected-badge { color:#21824f; font-size:13px; font-weight:800; }
+    .consult-feedback { min-height:20px; margin:8px 0 0 !important; color:#21824f !important; font-size:12px !important; font-weight:750; }
+    .end-call { min-height:48px; width:100%; border:0; border-radius:12px; background:#c93c46; color:white; font:inherit; font-weight:800; cursor:pointer; }
+    .phone-content { padding-bottom: 30px; scrollbar-width: none; -ms-overflow-style: none; }
+    .phone-content::-webkit-scrollbar { display: none; }
+    .phone-page { padding-bottom: 24px; }
+    .consult-modal-overlay { overflow: auto; }
+    .consult-modal { max-height: 100%; overflow-y: auto; }
+    .prediction-card { grid-column: 1 / -1; }
+    .prediction-body { padding: 20px 22px; }
+    .prediction-alert-title { display:flex; align-items:center; gap:10px; margin:0 0 10px; color:#ffd38a; font-size:17px; font-weight:800; }
+    .prediction-pulse { width:12px; height:12px; flex:none; border-radius:50%; background:#ff9d45; box-shadow:0 0 0 5px rgba(255,157,69,.12),0 0 16px rgba(255,157,69,.65); animation:prediction-pulse 1.2s ease-in-out infinite; }
+    @keyframes prediction-pulse { 50% { opacity:.48; transform:scale(.78); box-shadow:0 0 0 9px rgba(255,157,69,.05),0 0 8px rgba(255,157,69,.35); } }
+    .prediction-copy { margin:0 0 16px; color:#c1cdd1; font-size:14px; line-height:1.6; }
+    .prediction-recommendation { padding:13px 15px; border-left:3px solid #e8a44b; border-radius:0 11px 11px 0; background:rgba(232,164,75,.08); color:#e7d0ae; font-size:14px; line-height:1.55; }
+    .prediction-recommendation strong { color:#f2bd70; }
+    .prediction-actions { min-height:48px; margin-top:16px; padding:0 17px; border:1px solid rgba(232,164,75,.34); border-radius:12px; background:#815a24; color:#fff5e5; font:inherit; font-weight:750; cursor:pointer; }
+    .prediction-actions:hover { background:#95682a; }
+    .prediction-footnote { margin:14px 0 0; color:#87969b; font-size:12px; }
+    .prediction-confirmation { display:flex; align-items:center; gap:12px; padding:16px 18px; border:1px solid rgba(83,214,174,.26); border-radius:13px; background:rgba(83,214,174,.09); color:#9de8ca; font-size:16px; font-weight:800; }
+    .prediction-confirmation[hidden] { display:none; }
+    .prediction-check { display:grid; width:34px; height:34px; flex:none; place-items:center; border-radius:50%; background:rgba(83,214,174,.17); color:#70e2ac; font-size:21px; }
+    .ble-footer-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .ble-label { color: #51645a; font-size: 9px; font-weight: 750; }
+    .ble-toggle { position: relative; display: inline-flex; width: 37px; height: 21px; flex: none; align-items: center; padding: 2px; border: 0; border-radius: 99px; background: #c7d1ca; cursor: pointer; transition: background .18s ease; }
+    .ble-toggle::before { width: 17px; height: 17px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(0,0,0,.2); content: ""; transition: transform .18s ease; }
+    .ble-toggle[aria-checked="true"] { background: #318753; }
+    .ble-toggle[aria-checked="true"]::before { transform: translateX(16px); }
+    .ble-toggle:focus-visible { outline: 3px solid #48a96e; outline-offset: 3px; }
+    .ble-status { display: flex; min-height: 19px; align-items: center; gap: 6px; margin-top: 5px; color: #829087; font-size: 9px; line-height: 1.3; }
+    .ble-icon { width: 14px; height: 14px; flex: none; color: #829087; }
+    .ble-status.active { color: #2b8352; font-weight: 700; }
+    .ble-status.active .ble-icon { color: #2b9e60; animation: ble-pulse .85s ease-in-out infinite alternate; }
+    @keyframes ble-pulse { to { opacity: .45; filter: drop-shadow(0 0 4px #2b9e60); } }
+    .ops-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .85fr); gap: 18px; margin-top: 26px; }
+    .ops-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(155deg, #141e24, #10171c); box-shadow: 0 14px 35px rgba(0,0,0,.13); }
+    .ops-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 21px 22px 17px; border-bottom: 1px solid rgba(40,54,64,.72); }
+    .ops-card-title { margin: 0; color: var(--text); font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+    .ops-card-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .live-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 9px; border: 1px solid rgba(83,214,174,.2); border-radius: 999px; background: rgba(83,214,174,.07); color: #75dfb6; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+    .live-pill::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; content: ""; animation: ecg-live 1s ease-in-out infinite alternate; }
+    .corridor-map-wrap { padding: 13px 16px 2px; }
+    .corridor-map { display: block; width: 100%; height: auto; min-height: 270px; border: 1px solid #263841; border-radius: 14px; background: #0b1419; }
+    .map-grid-line { stroke: rgba(99,146,141,.1); stroke-width: 1; }
+    .map-contour { fill: none; stroke: rgba(105,146,143,.12); stroke-width: 1.3; }
+    .flight-path { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 8 8; }
+    .flight-path.route-one { stroke: #53d6ae; }
+    .flight-path.route-two { stroke: #64a6ff; }
+    .flight-path.route-three { stroke: #bd94ff; }
+    .map-hub { fill: #53d6ae; stroke: #d8fff0; stroke-width: 2; }
+    .map-village { fill: #10191e; stroke-width: 2.5; }
+    .map-village.one { stroke: #53d6ae; }
+    .map-village.two { stroke: #64a6ff; }
+    .map-village.three { stroke: #bd94ff; }
+    .map-title-label { fill: #e2eded; font: 600 12px system-ui, sans-serif; }
+    .map-small-label { fill: #8da0a4; font: 500 10px system-ui, sans-serif; }
+    .map-tag { fill: #132027; stroke: #334750; stroke-width: 1; }
+    .map-route-label { fill: #dce7e8; font: 700 9px system-ui, sans-serif; letter-spacing: .04em; }
+    .drone-glyph { fill: #dbfff0; stroke: #53d6ae; stroke-width: 1.4; filter: drop-shadow(0 0 5px rgba(83,214,174,.6)); }
+    .route-list { display: grid; gap: 1px; margin: 12px 16px 16px; overflow: hidden; border: 1px solid #283740; border-radius: 13px; background: #283740; }
+    .route-row { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 14px; padding: 12px 14px; background: #111a1f; }
+    .route-destination { display: inline-flex; align-items: center; gap: 9px; color: #dce8e8; font-size: 11px; font-weight: 650; }
+    .route-dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--accent); }
+    .route-row:nth-child(2) .route-dot { background: #64a6ff; }
+    .route-row:nth-child(3) .route-dot { background: #bd94ff; }
+    .route-metric { color: #9aabb0; font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .route-metric strong { color: #e2eeee; font-size: 11px; }
+    .telemetry-body { padding: 8px 22px 20px; }
+    .telemetry-metric { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 65px; border-bottom: 1px solid #26343b; }
+    .telemetry-metric:last-child { border-bottom: 0; }
+    .telemetry-label { color: #95a5aa; font-size: 11px; font-weight: 600; }
+    .telemetry-value { color: #ecf5f5; font-size: 18px; font-variant-numeric: tabular-nums; font-weight: 700; letter-spacing: -.025em; text-align: right; }
+    .telemetry-value small { color: #9aaaae; font-size: 10px; font-weight: 500; letter-spacing: 0; }
+    .telemetry-payload { max-width: 175px; color: #d8e4e5; font-size: 11px; font-weight: 600; line-height: 1.5; text-align: right; }
+    .telemetry-payload small { display: block; margin-top: 3px; color: #92a3a7; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 9px; }
+    .vault-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border: 1px solid rgba(83,214,174,.22); border-radius: 999px; background: rgba(83,214,174,.09); color: #70dfad; font-size: 10px; font-weight: 750; }
+    .vault-badge::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+    .satellite-active { display: inline-flex; align-items: center; gap: 7px; color: #72dfb6; font-size: 11px; font-weight: 700; }
+    .satellite-active svg { width: 15px; height: 15px; }
+    .ops-lower-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, .8fr); gap: 18px; margin-top: 18px; }
+    .fleet-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; padding: 15px; }
+    .fleet-kiosk { min-width: 0; padding: 11px; border: 1px solid #283740; border-radius: 12px; background: #10181d; }
+    .fleet-name { overflow: hidden; color: #dce8e8; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .fleet-location { margin-top: 3px; color: #82939a; font-size: 9px; }
+    .fleet-status-row { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-top: 11px; }
+    .battery-readout { display: inline-flex; align-items: center; gap: 5px; color: #c8d5d6; font-size: 9px; font-variant-numeric: tabular-nums; font-weight: 700; }
+    .battery-icon { width: 22px; height: 12px; flex: none; overflow: visible; }
+    .battery-icon rect.level { fill: currentColor; }
+    .battery-green { color: #55d696; }
+    .battery-yellow { color: #e6bd57; }
+    .battery-red { color: #f06b72; }
+    .connectivity { display: inline-flex; align-items: center; gap: 5px; color: #60d99a; font-size: 9px; font-weight: 700; }
+    .connectivity::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 7px currentColor; content: ""; }
+    .connectivity.offline { color: #fa727a; }
+    .inventory-line { display: flex; align-items: center; justify-content: space-between; gap: 7px; margin-top: 10px; color: #7f9096; font-size: 8px; }
+    .inventory-track { height: 4px; flex: 1; overflow: hidden; border-radius: 9px; background: #2a373d; }
+    .inventory-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #347e5c, #55d696); }
+    .inventory-fill.low { background: linear-gradient(90deg, #aa3d48, #f06b72); }
+    .heatmap-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; padding: 15px; }
+    .heat-tile { min-height: 76px; display: flex; flex-direction: column; justify-content: space-between; padding: 11px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; color: #101313; }
+    .heat-name { font-size: 10px; font-weight: 750; line-height: 1.25; }
+    .heat-value { margin-top: 7px; font-size: 20px; font-variant-numeric: tabular-nums; font-weight: 850; letter-spacing: -.05em; }
+    .heat-sickle { background: #a82e36; color: #fff0f0; }
+    .heat-gastro { background: #e47a35; color: #22150c; }
+    .heat-malaria { background: #e8ad3d; color: #241b0b; }
+    .heat-copd { background: #e5d450; color: #24200c; }
+    .heat-trauma { background: #eee99b; color: #292717; }
+    .heat-ncd { background: #c5e5a0; color: #20301b; }
+    .heat-maternal { background: #68c984; color: #102518; }
+    .heat-snakebite { background: #20734c; color: #eaffef; }
+    .heat-legend { display: flex; align-items: center; gap: 10px; padding: 0 16px 16px; color: #96a6aa; font-size: 9px; font-weight: 650; }
+    .heat-gradient { height: 7px; flex: 1; border-radius: 99px; background: linear-gradient(90deg, #a82e36, #e47a35, #e8ad3d, #e5d450, #eee99b, #c5e5a0, #68c984, #20734c); }
+    .heat-footnote { margin: 0; padding: 0 16px 16px; color: #aab7bb; font-size: 14px; line-height: 1.5; }
+    .prototype-badge { position: fixed; z-index: 9; right: 16px; bottom: 14px; display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 14px; border: 1px solid rgba(83,214,174,.3); border-radius: 999px; background: rgba(12,24,25,.96); box-shadow: 0 7px 24px rgba(0,0,0,.34); color: #9de8ca; font-size: 14px; font-weight: 700; pointer-events: none; }
+    .prototype-badge::before { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 9px var(--accent); content: ""; }
+    .claim-meta { align-items: flex-start; }
+    .claim-site { color: #829087; font-size: 14px; line-height: 1.45; }
+    .claim-site strong { display: block; color: #627068; font-size: 14px; }
+    .claim-countdown { flex: none; padding: 4px 7px; border: 1px solid #efe0c8; border-radius: 8px; background: #fff9ef; font-size: 14px; white-space: nowrap; }
+    .language-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .language-button { grid-column: span 2; }
+    .language-button:nth-child(4) { grid-column: 2 / span 2; }
+    .language-button:nth-child(5) { grid-column: 4 / span 2; }
+    .language-name { font-size: 14px; }
+    body { font-size: 16px; }
+    body :is(p, small, label, button, [class*="label"], [class*="status"], [class*="subtitle"], [class*="caption"], [class*="hint"], [class*="instruction"], [class*="metric"], [class*="readout"], [class*="state"], [class*="copy"], [class*="name"], [class*="description"], [class*="tag"], [class*="badge"], [class*="legend"], [class*="destination"], [class*="location"], [class*="countdown"], [class*="overline"], [class*="eyebrow"], [class*="rate"], [class*="medicine"]) { font-size: 14px !important; }
+    #view-kiosk :is(p, small, label, button, [class*="label"], [class*="status"], [class*="subtitle"], [class*="caption"], [class*="hint"], [class*="instruction"], [class*="metric"], [class*="readout"], [class*="state"], [class*="copy"], [class*="name"], [class*="description"], [class*="tag"], [class*="badge"], [class*="legend"], [class*="destination"], [class*="location"], [class*="countdown"], [class*="overline"], [class*="eyebrow"], [class*="rate"], [class*="medicine"]) { font-size: 16px !important; }
+    button { min-width: 48px; min-height: 48px; }
+    @media (max-width: 660px) {
+      .privacy-actions { grid-template-columns: 1fr; }
+      .language-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+      .language-button { min-height: 104px; padding: 7px 3px; border-radius: 15px; }
+      .language-native { font-size: 22px; }
+      .language-name { overflow-wrap: anywhere; }
+      .fleet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .prototype-badge { right: 9px; bottom: 9px; }
+    }
+    .bp-eyebrow { margin: 0 0 10px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .bp-title { margin: 0; font-size: clamp(26px, 4vw, 38px); font-weight: 650; letter-spacing: -.04em; }
+    .bp-instruction { margin: 10px 0 30px; color: var(--muted); font-size: 15px; }
+    .cuff-wrap { width: min(440px, 100%); margin: 0 auto 30px; }
+    .cuff { position: relative; height: 54px; overflow: hidden; border: 1px solid #354650; border-radius: 27px; background: #0b1217; box-shadow: inset 0 4px 12px rgba(0,0,0,.35); }
+    .cuff-fill { position: absolute; inset: 0 auto 0 0; width: 8%; border-radius: inherit; background: linear-gradient(90deg, #1f856e, var(--accent)); box-shadow: 0 0 24px rgba(83,214,174,.23); transition: width 3.2s cubic-bezier(.2,.7,.25,1); }
+    .cuff-pulse { position: absolute; inset: 0; display: grid; place-items: center; color: white; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-shadow: 0 1px 5px rgba(0,0,0,.8); }
+    .cuff.is-inflating .cuff-fill { width: 100%; }
+    .cuff.is-deflating .cuff-fill { width: 14%; transition-duration: 1.4s; }
+    .bp-result { display: flex; justify-content: center; align-items: baseline; gap: 10px; min-height: 74px; margin: 6px 0 24px; }
+    .bp-reading { color: var(--text); font-size: clamp(46px, 8vw, 72px); font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -.06em; line-height: 1; }
+    .bp-unit { color: var(--muted); font-size: 14px; }
+    .bp-action { min-width: min(100%, 280px); min-height: 64px; padding: 0 28px; border: 1px solid rgba(83,214,174,.4); border-radius: 16px; background: linear-gradient(135deg, #1c9b7d, #13745f); box-shadow: 0 8px 24px rgba(12,125,98,.22); color: #f4fffb; font: inherit; font-size: 18px; font-weight: 700; cursor: pointer; transition: filter .16s ease, transform .16s ease; }
+    .bp-action:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-1px); }
+    .bp-action:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    .bp-action:disabled { cursor: wait; opacity: .75; }
+    .bp-status { min-height: 24px; margin: 17px 0 0; color: var(--muted); font-size: 13px; }
+    .kiosk-back { margin-top: 22px; padding: 10px 14px; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+    .kiosk-back:hover { color: var(--text); }
+    .kiosk-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    .abha-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; margin-top: 18px; padding: 0 24px; border: 1px solid #38505a; border-radius: 14px; background: #121b21; color: var(--text); font: inherit; font-size: 15px; font-weight: 650; cursor: pointer; transition: border-color .16s ease, background .16s ease; }
+    .abha-button:hover { border-color: var(--accent); background: #17252a; }
+    .abha-button:focus-visible, .modal-close:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 20px; background: rgba(2,7,10,.76); backdrop-filter: blur(9px); }
+    .modal-backdrop[hidden] { display: none; }
+    .scanner-modal { position: relative; width: min(480px, 100%); padding: 34px; overflow: hidden; border: 1px solid #30434d; border-radius: 24px; background: radial-gradient(ellipse at 50% 0%, rgba(83,214,174,.1), transparent 55%), #111920; box-shadow: 0 24px 100px rgba(0,0,0,.5); text-align: center; }
+    .modal-close { position: absolute; top: 14px; right: 14px; display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid var(--line); border-radius: 12px; background: #172129; color: var(--muted); font: inherit; font-size: 22px; cursor: pointer; }
+    .scanner-modal h2 { margin: 4px 0 8px; font-size: 24px; letter-spacing: -.03em; }
+    .scanner-modal p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .scanner-frame { position: relative; display: grid; width: 210px; height: 210px; margin: 28px auto 20px; place-items: center; border: 1px solid rgba(83,214,174,.24); border-radius: 22px; background: #0b1217; }
+    .scanner-frame::before, .scanner-frame::after { position: absolute; width: 28px; height: 28px; border-color: var(--accent); border-style: solid; content: ""; }
+    .scanner-frame::before { top: 12px; left: 12px; border-width: 2px 0 0 2px; border-radius: 7px 0 0; }
+    .scanner-frame::after { right: 12px; bottom: 12px; border-width: 0 2px 2px 0; border-radius: 0 0 7px; }
+    .scanner-qr { width: 122px; height: 122px; color: #bdeadd; opacity: .65; }
+    .scan-beam { position: absolute; right: 18px; left: 18px; top: 18px; height: 2px; background: var(--accent); box-shadow: 0 0 12px 3px rgba(83,214,174,.65); animation: scan 2s ease-in-out infinite alternate; }
+    @keyframes scan { from { transform: translateY(0); opacity: .75; } to { transform: translateY(168px); opacity: 1; } }
+    .scanner-state { color: var(--accent) !important; font-size: 12px !important; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+    .chat-section { max-width: 1080px; margin: 30px auto 0; overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); }
+    .chat-header { display: flex; align-items: center; gap: 13px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+    .chat-avatar { display: grid; width: 42px; height: 42px; flex: none; place-items: center; border: 1px solid rgba(83,214,174,.25); border-radius: 14px; background: var(--accent-soft); color: var(--accent); }
+    .chat-avatar svg { width: 22px; height: 22px; }
+    .chat-heading { margin: 0; font-size: 16px; font-weight: 650; }
+    .chat-subheading { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .chat-presence { width: 8px; height: 8px; margin-left: auto; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(83,214,174,.55); }
+    .chat-messages { display: flex; height: min(42vh, 390px); min-height: 230px; flex-direction: column; gap: 16px; overflow-y: auto; padding: 24px; scroll-behavior: smooth; }
+    .chat-message { max-width: min(78%, 680px); padding: 14px 16px; border: 1px solid var(--line); border-radius: 4px 16px 16px; background: var(--surface-raised); color: var(--text); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
+    .chat-message.user { align-self: flex-end; border-color: rgba(83,214,174,.2); border-radius: 16px 4px 16px 16px; background: var(--accent-soft); }
+    .typing-indicator { display: inline-flex; align-items: center; gap: 5px; min-height: 46px; padding: 0 16px; border: 1px solid var(--line); border-radius: 4px 16px 16px; background: var(--surface-raised); }
+    .typing-indicator[hidden] { display: none; }
+    .typing-indicator span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typing 1s ease-in-out infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: .15s; }
+    .typing-indicator span:nth-child(3) { animation-delay: .3s; }
+    @keyframes typing { 0%, 60%, 100% { opacity: .35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
+    .chat-form { display: flex; gap: 12px; padding: 16px 20px; border-top: 1px solid var(--line); background: #0e161b; }
+    .chat-input { min-width: 0; min-height: 54px; flex: 1; padding: 0 16px; border: 1px solid #30414b; border-radius: 14px; outline: none; background: #111920; color: var(--text); font: inherit; font-size: 14px; }
+    .chat-input::placeholder { color: #70818a; }
+    .chat-input:focus { border-color: rgba(83,214,174,.65); box-shadow: 0 0 0 3px rgba(83,214,174,.1); }
+    .chat-send { display: grid; width: 54px; height: 54px; flex: none; place-items: center; border: 1px solid rgba(83,214,174,.3); border-radius: 14px; background: #16765f; color: white; cursor: pointer; }
+    .chat-send:hover { background: #1b9275; }
+    .chat-send:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .chat-mic { display: grid; width: 58px; height: 58px; flex: none; place-items: center; border: 1px solid rgba(114,163,255,.35); border-radius: 17px; background: #17263a; color: #a9c9ff; cursor: pointer; transition: background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease; }
+    .chat-mic svg { width: 25px; height: 25px; }
+    .chat-mic:hover { transform: translateY(-1px); background: #203653; color: #d4e4ff; }
+    .chat-mic:focus-visible { outline: 3px solid #91baff; outline-offset: 3px; }
+    .chat-mic[aria-pressed="true"] { border-color: #ff6f75; background: #492126; color: #ff9b9f; box-shadow: 0 0 0 5px rgba(255,111,117,.12), 0 0 24px rgba(255,111,117,.2); animation: mic-listening 1.1s ease-in-out infinite alternate; }
+    .chat-mic:disabled { cursor: not-allowed; opacity: .5; }
+    @keyframes mic-listening { to { box-shadow: 0 0 0 8px rgba(255,111,117,.05), 0 0 30px rgba(255,111,117,.3); } }
+    @media (max-width: 660px) {
+      .topbar { align-items: flex-start; flex-direction: column; gap: 14px; padding: 15px 18px 12px; }
+      .nav { width: 100%; gap: 3px; }
+      .nav-button { flex: 1; justify-content: center; gap: 6px; min-height: 42px; padding: 0 7px; font-size: 12px; }
+      .nav-icon { display: none; }
+      .workspace { min-height: calc(100vh - 130px); padding: 28px 20px; }
+      .view-heading { gap: 13px; }
+      .view-symbol { width: 42px; height: 42px; border-radius: 13px; }
+      .language-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .language-button { min-height: 104px; border-radius: 15px; }
+      .chat-header { padding: 16px; }
+      .chat-messages { padding: 18px 14px; }
+      .chat-form { gap: 8px; padding: 12px; }
+      .chat-mic { width: 52px; height: 54px; border-radius: 14px; }
+      .chat-message { max-width: 90%; }
+      .diagnostic-card { flex-wrap: wrap; gap: 12px; }
+      .diagnostic-info { min-width: calc(100% - 70px); }
+      .diagnostic-launch { width: 100%; }
+      .ppg-heading { flex-direction: column; }
+      .ppg-results { gap: 8px; }
+      .ppg-metric { padding: 14px; }
+      .temperature-art { height: 220px; }
+      @keyframes infrared-scan { from { transform: translateY(0); } to { transform: translateY(180px); } }
+      .emergency-grid { grid-template-columns: 1fr; }
+      .kiosk-dashboard-head { align-items: flex-start; flex-direction: column; }
+      .doctor-feed { min-height: 190px; }
+      .emergency-launch-row { justify-content: stretch; }
+      .emergency-launch { width: 100%; }
+      .vision-results { grid-template-columns: 1fr; }
+      .vision-camera { min-height: 240px; }
+      .ops-grid { grid-template-columns: 1fr; }
+      .route-row { grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; padding: 11px 9px; }
+      .ops-lower-grid { grid-template-columns: 1fr; }
+      .fleet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .teleconsult-backdrop { padding: 10px; }
+      .phone-frame { width: min(390px, 100%); height: min(790px, calc(100vh - 145px)); min-height: min(580px, calc(100vh - 145px)); border-radius: 46px; }
+      .phone-screen { border-radius: 37px; }
+      .teleconsult-layout { grid-template-columns: 1fr; grid-template-rows: minmax(260px, 1fr) auto; overflow-y: auto; }
+      .call-telemetry { padding: 16px; }
+      .call-metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; }
+      .call-telemetry-intro { margin-bottom: 10px; }
+      .call-metric { padding: 10px 0; }
+      .consultation-end-row { padding-top: 12px; }
+      .dispenser-columns { grid-template-columns: 1fr; }
+      .dispenser-footer { align-items: stretch; flex-direction: column; }
+      .verify-dispense { width: 100%; }
+    }
+    @media (max-width: 499px) {
+      #view-mobile { width: calc(100% + 40px); margin: -28px -20px; }
+      .phone-stage { min-height: calc(100dvh - 130px); padding: 0; }
+      .phone-frame { width: 100%; height: calc(100dvh - 130px); min-height: min(500px, calc(100dvh - 130px)); padding: 0; border: 0; border-radius: 0; background: #f4f7f5; box-shadow: none; }
+      .phone-frame::before, .phone-frame::after { display: none; }
+      .phone-screen { border: 0; border-radius: 0; }
+      .phone-content { padding-right: 16px; padding-bottom: 32px; padding-left: 16px; }
+      .consult-modal-overlay { padding: 12px; }
+      .consult-modal { width: 100%; max-height: 100%; padding: 18px 14px; border-radius: 17px; }
+      .doctor-avatar { width: 82px; height: 82px; margin: 12px auto; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+    button { min-width: 48px; min-height: 48px !important; }
+    #view-kiosk .language-button { min-height: 120px !important; }
+    body :is([class*="connectivity"], [class*="inventory"], [class*="pill"], [class*="footnote"], [class*="unit"], li, strong) { font-size: 14px !important; }
+    #view-kiosk :is([class*="connectivity"], [class*="inventory"], [class*="pill"], [class*="footnote"], [class*="unit"], li, strong) { font-size: 16px !important; }
+    body:has(#tab-kiosk[aria-selected="true"]) :is(p, small, label, button, li, strong, [class*="label"], [class*="status"], [class*="subtitle"], [class*="caption"], [class*="hint"], [class*="instruction"], [class*="metric"], [class*="readout"], [class*="state"], [class*="copy"], [class*="name"], [class*="description"], [class*="tag"], [class*="badge"], [class*="legend"], [class*="destination"], [class*="location"], [class*="countdown"], [class*="overline"], [class*="eyebrow"], [class*="rate"], [class*="medicine"], [class*="connectivity"], [class*="inventory"], [class*="pill"], [class*="footnote"], [class*="unit"]) { font-size: 16px !important; }
+    @media (max-width: 660px) {
+      .language-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; gap: 8px; }
+      .language-button { grid-column: span 2 !important; min-height: 104px !important; padding: 7px 3px; }
+      .language-button:nth-child(4) { grid-column: 2 / span 2 !important; }
+      .language-button:nth-child(5) { grid-column: 4 / span 2 !important; }
+      .language-native { font-size: 22px; }
+      #view-kiosk .language-button { min-height: 104px !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" aria-label="Wockhardt Swasthya-Mitra, Project Digital 1000">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5v17M3.5 12h17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </span>
+      <span><span class="brand-name">Swasthya-Mitra</span><span class="brand-caption" style="display:block">Project Digital 1000</span></span>
+    </div>
+    <nav class="nav" role="tablist" aria-label="Application views">
+      <button class="nav-button" id="tab-kiosk" type="button" role="tab" aria-selected="true" aria-controls="view-kiosk" tabindex="0" data-view="kiosk">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 21h6m-3-4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Kiosk
+      </button>
+      <button class="nav-button" id="tab-mobile" type="button" role="tab" aria-selected="false" aria-controls="view-mobile" tabindex="-1" data-view="mobile">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M10 18.5h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Mobile
+      </button>
+      <button class="nav-button" id="tab-dashboard" type="button" role="tab" aria-selected="false" aria-controls="view-dashboard" tabindex="-1" data-view="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 13h8V3H3v10Zm0 8h8v-5H3v5Zm12 0h6V11h-6v10Zm0-18v4h6V3h-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Dashboard
+      </button>
+    </nav>
+  </header>
+  <main class="workspace">
+    <section class="view" id="view-kiosk" role="tabpanel" aria-labelledby="tab-kiosk">
+      <div class="view-heading"><span class="view-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 21h6m-3-4v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><div><h1>Kiosk Terminal</h1><p class="view-description">Village care point interface</p></div></div>
+      <div class="kiosk-stage" id="language-stage">
+      <div class="language-panel">
+        <p class="language-eyebrow">Welcome · Swasthya-Mitra</p>
+        <h2 class="language-title">Choose your language</h2>
+        <p class="language-hint">अपनी भाषा चुनें · तुमची भाषा निवडा</p>
+        <div class="language-grid" aria-label="Choose a language">
+          <button class="language-button" type="button" data-language="Bhili"><span class="language-native" lang="hi">भीली</span><span class="language-name">Bhili</span></button>
+          <button class="language-button" type="button" data-language="Pawari" aria-label="Pawari, play welcome audio prompt"><span class="language-native" lang="hi">पावरी</span><span class="language-name">Pawari</span></button>
+          <button class="language-button" type="button" data-language="Marathi"><span class="language-native" lang="mr">मराठी</span><span class="language-name">Marathi</span></button>
+          <button class="language-button" type="button" data-language="Hindi"><span class="language-native" lang="hi">हिन्दी</span><span class="language-name">Hindi</span></button>
+          <button class="language-button" type="button" data-language="English"><span class="language-native" lang="en">English</span><span class="language-name">English</span></button>
+        </div>
+        <p class="audio-status" id="audio-status" role="status" aria-live="polite">Touch a language to begin</p>
+        <button class="abha-button" id="open-scanner" type="button"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h3v3h-3zm5 0h2m-7 5h3m2-2v4m2-3h1" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Scan ABHA QR Code</button>
+      </div>
+      </div>
+      <div class="kiosk-stage" id="privacy-stage" hidden>
+        <section class="privacy-panel" aria-labelledby="privacy-title">
+          <h2 id="privacy-title">Wockhardt Swasthya-Mitra — Your Privacy and Information Rights (DPDPA 2023 Aligned)</h2>
+          <ol class="privacy-list">
+            <li><strong>1. WHAT WE RECORD</strong>Your blood pressure, oxygen level, symptoms, and doctor's advice.</li>
+            <li><strong>2. WHY WE RECORD IT</strong>So your doctor remembers your medical history when you return.</li>
+            <li><strong>3. WHO CAN SEE IT</strong>Only your licensed consulting doctor and dispensing pharmacist.</li>
+            <li><strong>4. WHAT WE NEVER DO</strong>We NEVER sell your name or personal data to commercial advertisers.</li>
+            <li><strong>5. YOUR ETHICAL CHOICE</strong>You receive full healthcare even if you decline secondary research.</li>
+          </ol>
+          <div class="privacy-actions"><button class="privacy-action" id="agree-privacy" type="button">AGREE &amp; CONTINUE CARE</button><button class="privacy-action secondary" id="privacy-audio" type="button">LEARN MORE IN DIALECT</button></div>
+          <p class="privacy-footnote">Academic prototype. Simulated data. Not an operational Wockhardt programme.</p>
+          <p class="audio-status" id="privacy-audio-status" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      <div class="kiosk-dashboard" id="kiosk-dashboard" hidden>
+        <div class="kiosk-dashboard-head"><h2 class="kiosk-dashboard-title" data-i18n="dashboard">Kiosk Dashboard</h2><button class="network-toggle" id="network-toggle" type="button" aria-pressed="true">Online: Cloud AI</button></div>
+        <div class="emergency-launch-row"><button class="emergency-launch" id="simulate-emergency" type="button"><span aria-hidden="true">!</span>Emergency Code Red <span class="price-tag free">FREE</span></button></div>
+        <div class="diagnostic-stack">
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">♥</span>
+            <div class="diagnostic-info"><h3><span data-i18n="bpTitle">Blood Pressure / Vitals Check</span><span class="price-tag">₹10</span></h3><p>SunTech NIBP cuff · Ready for measurement</p></div>
+            <button class="diagnostic-launch" id="open-bp" type="button" data-i18n="bpStart">Start Cuff</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">⌁</span>
+            <div class="diagnostic-info"><h3><span data-i18n="ppgTitle">Pulse Oximetry</span><span class="price-tag">Included</span></h3><p>MAX30102 finger clip · SpO₂ and pulse</p></div>
+            <button class="diagnostic-launch" id="open-ppg" type="button" data-i18n="ppgStart">Start Finger Clip</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">温</span>
+            <div class="diagnostic-info"><h3><span data-i18n="tempTitle">Contactless Forehead Temperature</span><span class="price-tag">Included</span></h3><p>MLX90614 infrared thermopile · No-contact scan</p></div>
+            <button class="diagnostic-launch" id="open-temperature" type="button" data-i18n="tempStart">Start Scan</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">⌁</span>
+            <div class="diagnostic-info"><h3>3-Lead ECG <span class="price-tag">₹30</span></h3><p>TI ADS1293 · Live cardiac waveform</p></div>
+            <button class="diagnostic-launch" id="open-ecg" type="button">Start 3-Lead ECG</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">◎</span>
+            <div class="diagnostic-info"><h3>Vision Scan (Macro Camera Skin &amp; Wound) <span class="price-tag">₹15</span></h3><p>Simulated camera · Anemia and jaundice screening</p></div>
+            <button class="diagnostic-launch" id="open-vision" type="button">Vision Scan</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">◉</span>
+            <div class="diagnostic-info"><h3>Teleconsultation (General MBBS) <span class="price-tag">₹40</span></h3><p>Secure simulated video visit · Wockhardt Hospital Nashik</p></div>
+            <button class="diagnostic-launch" id="open-teleconsult" type="button">Start Teleconsultation</button>
+          </article>
+          <article class="diagnostic-card">
+            <span class="diagnostic-icon" aria-hidden="true">▤</span>
+            <div class="diagnostic-info"><h3>Automated Dispenser</h3><p>Dual-auth e-Prescription · Secure OTP verification</p></div>
+            <button class="diagnostic-launch" id="open-dispenser" type="button">Open Dispenser</button>
+          </article>
+          <article class="diagnostic-card"><span class="diagnostic-icon" aria-hidden="true">◌</span><div class="diagnostic-info"><h3>Blood Glucose (POC) <span class="price-tag">₹20</span></h3><p>Point-of-care finger-prick glucose test</p><p class="diagnostic-result" id="glucose-result" aria-live="polite" hidden></p></div><button class="diagnostic-launch" id="start-glucose" type="button">Start Test</button></article>
+          <article class="diagnostic-card"><span class="diagnostic-icon" aria-hidden="true">◈</span><div class="diagnostic-info"><h3>Sickle Cell Solubility Test <span class="price-tag">₹25</span></h3><p>SRV-DIA-05 · Rapid screening</p><p class="diagnostic-result" id="sickle-result" aria-live="polite" hidden></p></div><button class="diagnostic-launch" id="start-sickle" type="button">Start Test</button></article>
+          <article class="diagnostic-card"><span class="diagnostic-icon" aria-hidden="true">✚</span><div class="diagnostic-info"><h3>Rapid Malaria Antigen (Pf/Pv) <span class="price-tag">₹25</span></h3><p>SRV-DIA-06 · Rapid antigen screen</p><p class="diagnostic-result" id="malaria-result" aria-live="polite" hidden></p></div><button class="diagnostic-launch" id="start-malaria" type="button">Start Test</button></article>
+          <article class="diagnostic-card"><span class="diagnostic-icon" aria-hidden="true">♡</span><div class="diagnostic-info"><h3>Digital Stethoscope Auscultation <span class="price-tag">₹25</span></h3><p>SRV-DIA-07 · Simulated heart-sound check</p><p class="diagnostic-result" id="stethoscope-result" aria-live="polite" hidden></p></div><button class="diagnostic-launch" id="start-stethoscope" type="button">Start Test</button></article>
+        </div>
+      </div>
+      <div class="kiosk-stage" id="blood-pressure-stage" hidden>
+        <div class="bp-panel">
+          <p class="bp-eyebrow" data-i18n="triage1">Diagnostic triage · 01</p>
+          <h2 class="bp-title" data-i18n="bpTitle">Blood Pressure</h2>
+          <p class="bp-instruction" data-i18n="bpInstruction">Place your arm in the cuff and stay still during measurement.</p>
+          <div class="cuff-wrap" aria-hidden="true"><div class="cuff" id="cuff"><div class="cuff-fill"></div><div class="cuff-pulse" id="cuff-label">CUFF READY</div></div></div>
+          <div class="bp-result" aria-live="polite"><span class="bp-reading" id="bp-reading">— / —</span><span class="bp-unit">mmHg</span></div>
+          <button class="bp-action" id="start-cuff" type="button" data-i18n="bpStart">Start Cuff</button>
+          <p class="bp-status" id="bp-status" role="status" aria-live="polite" data-i18n="ready">Ready when you are.</p>
+          <button class="kiosk-back" id="back-to-languages" type="button" data-i18n="backDashboard">← Back to dashboard</button>
+        </div>
+      </div>
+      <div class="diagnostic-stage" id="pulse-oximetry-stage" hidden>
+        <div class="ppg-panel">
+          <div class="ppg-heading">
+            <div><p class="bp-eyebrow" data-i18n="triage2">Diagnostic triage · 02</p><h2 data-i18n="ppgTitle">Pulse Oximetry</h2><p data-i18n="ppgInstruction">Place your fingertip in the clip and hold still.</p></div>
+            <span class="sensor-state" id="ppg-state" data-i18n="sensorIdle">Sensor idle</span>
+          </div>
+          <div class="ppg-chart"><canvas id="ppg-canvas" role="img" aria-label="Live pulse oximetry waveform"></canvas></div>
+          <div class="ppg-results" aria-live="polite">
+            <div class="ppg-metric"><div class="ppg-metric-label" data-i18n="oxygen">Oxygen saturation</div><div class="ppg-metric-value pending" id="spo2-result">—%</div></div>
+            <div class="ppg-metric"><div class="ppg-metric-label" data-i18n="pulseRate">Pulse rate</div><div class="ppg-metric-value pending" id="pulse-result">— bpm</div></div>
+          </div>
+          <div class="ppg-actions"><button class="ppg-back" id="back-from-ppg" type="button" data-i18n="backDiagnostics">← Back to diagnostics</button></div>
+        </div>
+      </div>
+      <div class="temperature-stage" id="temperature-stage" hidden>
+        <div class="temperature-panel">
+          <div class="ppg-heading">
+            <div><p class="bp-eyebrow" style="color:#ff777d" data-i18n="triage3">Diagnostic triage · 03</p><h2 data-i18n="tempTitle">Contactless Forehead Temperature</h2><p class="bp-instruction" data-i18n="tempInstruction">Hold still while the infrared sensor takes a reading.</p></div>
+            <span class="sensor-state" id="temperature-state" data-i18n="sensorIdle">Sensor idle</span>
+          </div>
+          <div class="temperature-art" role="img" aria-label="Infrared thermopile scanning a forehead outline">
+            <svg class="forehead-outline" viewBox="0 0 180 200" fill="none" aria-hidden="true"><path class="face" d="M34 84c0-40 23-67 56-67s56 27 56 67v19c0 42-24 76-56 76s-56-34-56-76V84Z" stroke="currentColor" stroke-width="3"/><path d="M52 91c8-6 16-6 24 0m28 0c8-6 16-6 24 0M76 132c9 7 19 7 28 0" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M14 50V24h26m100 0h26v26M14 150v26h26m100 0h26v-26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
+            <span class="infrared-beam" aria-hidden="true"></span>
+          </div>
+          <div class="temperature-readout pending" id="temperature-result" aria-live="polite">— <span class="temperature-units">°C</span></div>
+          <div class="temperature-actions"><button class="ppg-back" id="back-from-temperature" type="button" data-i18n="backDiagnostics">← Back to diagnostics</button></div>
+        </div>
+      </div>
+      <section class="chat-section" id="kiosk-chat-section" aria-labelledby="chat-heading" hidden>
+        <header class="chat-header">
+          <span class="chat-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3a8.5 8.5 0 0 0-7.5 12.5L3.5 21l5.7-1.2A8.5 8.5 0 1 0 12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+          <div><h2 class="chat-heading" id="chat-heading" data-i18n="chatTitle">AI Health Assistant</h2><p class="chat-subheading" data-i18n="chatSubtitle">Ask a question about how you’re feeling</p></div>
+          <span class="chat-presence" aria-label="Available"></span>
+        </header>
+        <div class="chat-messages" id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions">
+          <div class="chat-message" id="chat-welcome" data-i18n="chatWelcome">Hello. Tell me what’s bothering you, and I’ll try to help.</div>
+          <div class="typing-indicator" id="typing-indicator" role="status" aria-label="Assistant is typing" hidden><span></span><span></span><span></span></div>
+        </div>
+        <form class="chat-form" id="chat-form">
+          <input class="chat-input" id="chat-input" name="message" type="text" placeholder="Describe your symptoms…" data-i18n-placeholder="chatPlaceholder" autocomplete="off" aria-label="Your message" required>
+          <button class="chat-mic" id="chat-mic" type="button" aria-label="Start voice input" aria-pressed="false" title="Speak your message"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3m-4 0h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button class="chat-send" type="submit" aria-label="Send message"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </form>
+      </section>
+      <div class="prototype-badge" role="note">Prototype: simulated sensor data</div>
+    </section>
+    <section class="view" id="view-mobile" role="tabpanel" aria-labelledby="tab-mobile" hidden>
+      <div class="phone-stage">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-statusbar"><span>9:41</span><span class="phone-notch" aria-hidden="true"></span><span class="phone-system-icons" aria-label="Mobile network, Wi-Fi, battery"><svg viewBox="0 0 18 14" fill="currentColor" aria-hidden="true"><path d="M1 10h2v3H1zm4-3h2v6H5zm4-3h2v9H9zm4-3h2v12h-2z"/></svg><svg viewBox="0 0 18 14" fill="none" aria-hidden="true"><path d="M2 5.5a10 10 0 0 1 14 0M4.5 8a6.5 6.5 0 0 1 9 0M7 10.5a3 3 0 0 1 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="12" r=".8" fill="currentColor"/></svg><svg viewBox="0 0 20 14" fill="none" aria-hidden="true"><rect x="1" y="2" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M18 5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="3" y="4" width="10" height="6" rx="1" fill="currentColor"/></svg></span></div>
+            <header class="phone-app-head"><p class="phone-app-overline">Care-for-Home</p><h1>Family Vitals Hub</h1><p>Stay close to your family’s health</p></header>
+            <main class="phone-content">
+              <section class="phone-page" data-mobile-page="family">
+              <section class="family-profile" aria-label="Family member profile">
+                <span class="family-avatar" aria-hidden="true">RP</span>
+                <div><h2>Ramesh Pawari (Father, Age ~58)</h2><p>Village: Bilgaon | Primary Kiosk: #03 (Patil Kirana)</p></div>
+              </section>
+              <div class="vitals-sync-head"><h2 class="family-section-title">Latest Vitals</h2><span class="sync-caption">Synced just now</span></div>
+              <section class="mobile-vitals" aria-label="Latest health readings">
+                <article class="mobile-vital"><div class="mobile-vital-label">Blood Pressure</div><div class="mobile-vital-value">124/82 <small>mmHg</small></div></article>
+                <article class="mobile-vital"><div class="mobile-vital-label">SpO₂</div><div class="mobile-vital-value">98<small>%</small></div></article>
+                <article class="mobile-vital"><div class="mobile-vital-label">Temperature</div><div class="mobile-vital-value">36.6<small>°C</small></div></article>
+                <article class="mobile-vital"><div class="mobile-vital-label">Blood Glucose</div><div class="mobile-vital-value">118 <small>mg/dL</small></div></article>
+                <article class="mobile-vital"><div class="mobile-vital-label">Health status</div><div class="mobile-vital-value"><span class="stable-badge">Stable</span></div></article>
+              </section>
+              <section class="wallet-card" aria-label="Medicine wallet balance">
+                <div class="wallet-top"><div><p class="wallet-label">Medicine Wallet Balance</p><p class="wallet-balance" id="wallet-balance">₹1,450</p></div><span class="wallet-icon" aria-hidden="true">₹</span></div>
+                <button class="wallet-recharge" id="open-recharge" type="button">UPI Wallet Recharge</button>
+              </section>
+              </section>
+              <section class="phone-page" data-mobile-page="claims" hidden>
+              <h2 class="phone-page-title">Prescription Claim Locker</h2>
+              <section class="claim-card" aria-labelledby="claim-title">
+                <div class="claim-heading"><h2 id="claim-title">Active Prescription Claim Locker</h2><span class="claim-active">Active</span></div>
+                <p class="claim-medicine">Hydroxyurea 500mg</p>
+                <div class="claim-meta"><span class="claim-site">Ramesh Pawari - Kiosk #03, Bilgaon</span><span class="claim-countdown" id="claim-countdown">14m 20s</span></div>
+                <div class="claim-token">
+                  <svg class="claim-qr" viewBox="0 0 84 84" shape-rendering="crispEdges" role="img" aria-label="Prescription pickup QR code placeholder">
+                    <rect width="84" height="84" fill="white"/>
+                    <path fill="currentColor" d="M4 4h28v28H4zm4 4v20h20V8zm4 4h12v12H12zM52 4h28v28H52zm4 4v20h20V8zm4 4h12v12H60zM4 52h28v28H4zm4 4v20h20V56zm4 4h12v12H12zM36 4h8v8h-8zm0 16h8v8h-8zm-4 16h8v8h-8zm12 0h8v8h-8zm12 0h8v8h-8zm16 0h8v8h-8zM36 48h8v8h-8zm12 4h8v8h-8zm12-4h8v8h-8zm12 4h8v8h-8zM36 60h8v8h-8zm8 8h8v8h-8zm8-4h8v8h-8zm12 4h8v8h-8zm8 8h8v4h-8zM32 76h8v4h-8z"/>
+                  </svg>
+                  <div><p class="claim-otp-label">Pickup OTP</p><p class="claim-otp" id="claim-otp">948201</p><p class="claim-pickup-hint">Show this code at your village kiosk.</p></div>
+                </div>
+              </section>
+              </section>
+              <section class="phone-page" data-mobile-page="offline" hidden>
+                <h2 class="phone-page-title">Offline BLE Sync</h2>
+                <section class="offline-card" aria-label="Bluetooth sync status">
+                  <div class="ble-footer">
+                    <div class="ble-footer-head"><span class="ble-label">Simulate BLE Beacon</span><button class="ble-toggle" id="ble-toggle" type="button" role="switch" aria-checked="false" aria-label="Simulate BLE Beacon"></button></div>
+                    <div class="ble-status" id="ble-status" role="status" aria-live="polite"><svg class="ble-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 7 10 10-5 4V3l5 4L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>BLE Beacon Off</span></div>
+                  </div>
+                </section>
+              </section>
+              <section class="phone-page" data-mobile-page="consult" hidden>
+                <h2 class="phone-page-title">Urban Digital Health</h2>
+                <section class="consult-card"><h3>Video consultation</h3><p>Speak with a Wockhardt urban health doctor.</p><button class="consult-primary" id="start-consult" type="button">Start Video Consult</button></section>
+                <section class="consult-card"><h3>Care-for-Home Pass</h3><p class="consult-price" id="pass-price">₹349/month</p><p id="pass-status">Access connected care for your family.</p><button class="consult-action" id="subscribe-pass" type="button">Subscribe via UPI</button></section>
+                <section class="consult-card"><h3>Book Home Visit</h3><p>Request a nurse to visit your home.</p><button class="consult-action" id="request-nurse" type="button">Request Nurse</button><p class="consult-feedback" id="nurse-status" role="status" aria-live="polite"></p></section>
+              </section>
+            </main>
+            <nav class="phone-tabs" aria-label="Mobile app navigation">
+              <button class="phone-tab active" type="button" data-mobile-tab="family" aria-current="page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1V10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Family</button>
+              <button class="phone-tab" type="button" data-mobile-tab="claims"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 3h12v18l-6-3-6 3V3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 8h6m-6 4h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Claims</button>
+              <button class="phone-tab" type="button" data-mobile-tab="consult"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m16 10 5-3v10l-5-3" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Consult</button>
+              <button class="phone-tab" type="button" data-mobile-tab="offline"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/></svg>Offline</button>
+            </nav>
+            <span class="phone-home-indicator" aria-hidden="true"></span>
+            <div class="consult-modal-overlay" id="consult-modal" hidden>
+              <section class="consult-modal" role="dialog" aria-modal="true" aria-labelledby="consult-modal-title"><h2 id="consult-modal-title">Urban Wockhardt Video Consult</h2><div class="doctor-avatar" aria-hidden="true">+</div><p><strong>Dr. Deshmukh</strong><br>Wockhardt Urban Health</p><p class="connected-badge">● Connected</p><button class="end-call" id="end-consult" type="button">End Call</button></section>
+            </div>
+            <div class="recharge-overlay" id="recharge-overlay" hidden>
+              <section class="recharge-modal" role="dialog" aria-modal="true" aria-labelledby="recharge-title">
+                <div class="recharge-modal-head"><div><h2 id="recharge-title">UPI Wallet Recharge</h2><p>Choose a payment app and recharge amount.</p></div><button class="recharge-close" id="close-recharge" type="button" aria-label="Close recharge">×</button></div>
+                <div class="recharge-options">
+                  <button class="recharge-option" type="button" data-provider="PhonePe" data-amount="350"><span class="payment-mark">पे</span><span class="payment-name">PhonePe</span><span class="payment-amount">₹350</span></button>
+                  <button class="recharge-option" type="button" data-provider="Google Pay" data-amount="500"><span class="payment-mark">G</span><span class="payment-name">Google Pay</span><span class="payment-amount">₹500</span></button>
+                  <button class="recharge-option" type="button" data-provider="Paytm" data-amount="1050"><span class="payment-mark">P</span><span class="payment-name">Paytm</span><span class="payment-amount">₹1,050</span></button>
+                </div>
+                <p class="recharge-state" id="recharge-state" role="status" aria-live="polite"></p>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="view" id="view-dashboard" role="tabpanel" aria-labelledby="tab-dashboard" hidden>
+      <div class="view-heading"><span class="view-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h8V3H3v10Zm0 8h8v-5H3v5Zm12 0h6V11h-6v10Zm0-18v4h6V3h-6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><div><h1>Operations Dashboard</h1><p class="view-description">District command and drone logistics</p></div></div>
+      <div class="ops-grid">
+        <section class="ops-card" aria-labelledby="corridor-title">
+          <header class="ops-card-header"><div><h2 class="ops-card-title" id="corridor-title">Live Corridor Map</h2><p class="ops-card-subtitle">Dhadgaon BVLOS flight network</p></div><span class="live-pill">Live</span></header>
+          <div class="corridor-map-wrap">
+            <svg class="corridor-map" viewBox="0 0 720 440" role="img" aria-label="Map of Dhadgaon Command Hub and three drone corridors to Bilgaon, Domkhedi, and Chandsaili">
+              <defs>
+                <pattern id="map-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" class="map-grid-line" fill="none"/></pattern>
+                <radialGradient id="hub-glow"><stop stop-color="#53d6ae" stop-opacity=".26"/><stop offset="1" stop-color="#53d6ae" stop-opacity="0"/></radialGradient>
+              </defs>
+              <rect width="720" height="440" rx="14" fill="url(#map-grid)"/>
+              <ellipse cx="360" cy="220" rx="285" ry="178" fill="url(#hub-glow)"/>
+              <path class="map-contour" d="M28 104c83-60 152-35 222-44s150 21 225-9 136-3 216-27M15 137c88-43 151-26 224-31s145 17 221-7 169-1 251-23M26 340c65-39 137-12 210 8s150-8 220 9 160 8 232-28M43 372c76-25 132-4 196 17s146-7 217 7 153 4 219-24"/>
+              <path class="map-contour" d="M137 24c19 56 12 103 3 152s7 103-4 146 2 77 24 107M587 16c-25 53-12 103 5 153s-7 107 8 153-2 76-25 109M296 16c-14 52 6 94-2 143s4 103-2 150 2 85 17 115M450 22c16 55-6 102 3 151s-4 106 3 151-2 81-16 111"/>
+              <path id="corridor-1-path" class="flight-path route-one" d="M355 245 Q280 185 175 108"/>
+              <path id="corridor-2-path" class="flight-path route-two" d="M365 250 Q490 179 568 103"/>
+              <path id="corridor-3-path" class="flight-path route-three" d="M350 260 Q296 329 224 365"/>
+              <g transform="translate(175 108)"><circle r="9" class="map-village one"/><circle r="3" fill="#53d6ae"/><text x="-7" y="-22" class="map-title-label">Bilgaon</text></g>
+              <g transform="translate(568 103)"><circle r="9" class="map-village two"/><circle r="3" fill="#64a6ff"/><text x="-15" y="-22" class="map-title-label">Domkhedi</text></g>
+              <g transform="translate(224 365)"><circle r="9" class="map-village three"/><circle r="3" fill="#bd94ff"/><text x="-21" y="-20" class="map-title-label">Chandsaili</text></g>
+              <circle cx="360" cy="252" r="35" fill="url(#hub-glow)"/>
+              <circle cx="360" cy="252" r="11" class="map-hub"/>
+              <text x="360" y="282" text-anchor="middle" class="map-title-label">Dhadgaon Command Hub</text>
+              <text x="360" y="297" text-anchor="middle" class="map-small-label">DISTRICT LOGISTICS NODE</text>
+              <g transform="translate(205 142)"><rect class="map-tag" width="77" height="21" rx="7"/><text x="38.5" y="14" text-anchor="middle" class="map-route-label">CORRIDOR 1</text></g>
+              <g transform="translate(479 142)"><rect class="map-tag" width="77" height="21" rx="7"/><text x="38.5" y="14" text-anchor="middle" class="map-route-label">CORRIDOR 2</text></g>
+              <g transform="translate(230 312)"><rect class="map-tag" width="77" height="21" rx="7"/><text x="38.5" y="14" text-anchor="middle" class="map-route-label">CORRIDOR 3</text></g>
+              <g class="drone-glyph">
+                <animateMotion dur="8s" repeatCount="indefinite" rotate="auto"><mpath href="#corridor-1-path"/></animateMotion>
+                <path d="M-10 0h20M0-5v10M-13-5l4 4m18-4L5-1M-13 5l4-4m18 4L5 1" fill="none" stroke="#dbfff0" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="3.5" fill="#53d6ae"/>
+              </g>
+            </svg>
+          </div>
+          <div class="route-list" aria-label="Flight corridor details">
+            <div class="route-row"><span class="route-destination"><i class="route-dot"></i>Corridor 1 · Bilgaon</span><span class="route-metric"><strong>22.4</strong> km</span><span class="route-metric"><strong>18</strong> min</span></div>
+            <div class="route-row"><span class="route-destination"><i class="route-dot"></i>Corridor 2 · Domkhedi</span><span class="route-metric"><strong>28.8</strong> km</span><span class="route-metric"><strong>23</strong> min</span></div>
+            <div class="route-row"><span class="route-destination"><i class="route-dot"></i>Corridor 3 · Chandsaili</span><span class="route-metric"><strong>14.1</strong> km</span><span class="route-metric"><strong>12</strong> min</span></div>
+          </div>
+        </section>
+        <section class="ops-card" aria-labelledby="telemetry-title">
+          <header class="ops-card-header"><div><h2 class="ops-card-title" id="telemetry-title">Live Drone Telemetry</h2><p class="ops-card-subtitle">BVLOS Unit · Corridor 1</p></div><span class="live-pill">Live</span></header>
+          <div class="telemetry-body">
+            <div class="telemetry-metric"><span class="telemetry-label">Altitude</span><span class="telemetry-value"><span id="drone-altitude">290</span><small> m MSL</small></span></div>
+            <div class="telemetry-metric"><span class="telemetry-label">Speed</span><span class="telemetry-value"><span id="drone-speed">85</span><small> km/h</small></span></div>
+            <div class="telemetry-metric"><span class="telemetry-label">Payload</span><span class="telemetry-payload">Lyophilized Polyvalent Anti-Snake Venom Kit<small>SKU WCK-EMG-36B</small></span></div>
+            <div class="telemetry-metric"><span class="telemetry-label">Cold-Vault Temp</span><span class="telemetry-value"><span id="vault-temperature">3.8</span><small> °C</small></span></div>
+            <div class="telemetry-metric"><span class="telemetry-label">Temperature Status</span><span class="vault-badge" id="vault-status">Stable · 2–8°C</span></div>
+            <div class="telemetry-metric"><span class="telemetry-label">Satellite Link</span><span class="satellite-active"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 19 5m-9 0h9v9M5 10v9h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Iridium SBD · Active</span></div>
+          </div>
+        </section>
+      </div>
+      <div class="ops-lower-grid">
+        <section class="ops-card" aria-labelledby="fleet-title">
+          <header class="ops-card-header"><div><h2 class="ops-card-title" id="fleet-title">Kiosk Fleet Grid</h2><p class="ops-card-subtitle">Solar power · 4G connectivity · medicine canisters</p></div><span class="live-pill">16 Sites</span></header>
+          <div class="fleet-grid">
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #01</div><div class="fleet-location">Khuntamodi</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="78 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="14" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>78%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:82%"></span></span><span>82%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #02</div><div class="fleet-location">Domkhedi</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="64 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="11" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>64%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:63%"></span></span><span>63%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #03</div><div class="fleet-location">Bilgaon (Patil Kirana)</div><div class="fleet-status-row"><span class="battery-readout battery-yellow"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="48 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="9" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>48%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:71%"></span></span><span>71%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #04</div><div class="fleet-location">Akkalkuwa</div><div class="fleet-status-row"><span class="battery-readout battery-yellow"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="22 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="5" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>22%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill low" style="display:block;width:18%"></span></span><span>18%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #05</div><div class="fleet-location">Chandsaili</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="86 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="15" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>86%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:90%"></span></span><span>90%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #06</div><div class="fleet-location">Molgi</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="55 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="10" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>55%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:52%"></span></span><span>52%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #07</div><div class="fleet-location">Manibeli</div><div class="fleet-status-row"><span class="battery-readout battery-yellow"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="39 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="7" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>39%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:44%"></span></span><span>44%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #08</div><div class="fleet-location">Dhadgaon</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="92 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="16" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>92%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:76%"></span></span><span>76%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #09</div><div class="fleet-location">Roshmal</div><div class="fleet-status-row"><span class="battery-green battery-readout"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="67 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="12" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>67%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:68%"></span></span><span>68%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #10</div><div class="fleet-location">Kukal</div><div class="fleet-status-row"><span class="battery-readout battery-yellow"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="31 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="6" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>31%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:36%"></span></span><span>36%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #11</div><div class="fleet-location">Talai</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="74 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="13" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>74%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:58%"></span></span><span>58%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #12</div><div class="fleet-location">Kathi</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="58 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="10" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>58%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:79%"></span></span><span>79%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #13</div><div class="fleet-location">Umarani</div><div class="fleet-status-row"><span class="battery-readout battery-yellow"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="44 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="8" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>44%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:49%"></span></span><span>49%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #14</div><div class="fleet-location">Kelwa</div><div class="fleet-status-row"><span class="battery-readout battery-green"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="81 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="14" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>81%</span><span class="connectivity">Online</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill" style="display:block;width:85%"></span></span><span>85%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #15</div><div class="fleet-location">Khadki</div><div class="fleet-status-row"><span class="battery-readout battery-red"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="14 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="3" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>14%</span><span class="connectivity offline">Offline</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill low" style="display:block;width:12%"></span></span><span>12%</span></div></article>
+            <article class="fleet-kiosk"><div class="fleet-name">Kiosk #16</div><div class="fleet-location">Khadki Kh.</div><div class="fleet-status-row"><span class="battery-readout battery-red"><svg class="battery-icon" viewBox="0 0 24 14" aria-label="9 percent battery"><rect x="1" y="1" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect class="level" x="3" y="3" width="2" height="8" rx="1"/><path d="M22 5v4" stroke="currentColor" stroke-width="2"/></svg>9%</span><span class="connectivity offline">Offline</span></div><div class="inventory-line"><span>Canisters</span><span class="inventory-track"><span class="inventory-fill low" style="display:block;width:22%"></span></span><span>22%</span></div></article>
+          </div>
+        </section>
+        <section class="ops-card" aria-labelledby="heatmap-title">
+          <header class="ops-card-header"><div><h2 class="ops-card-title" id="heatmap-title">Disease Surveillance Heatmap</h2><p class="ops-card-subtitle">Share of reported district incidence</p></div><span class="live-pill">Surveillance</span></header>
+          <div class="heatmap-grid" aria-label="Disease incidence breakdown">
+            <article class="heat-tile heat-sickle"><span class="heat-name">Sickle Cell</span><strong class="heat-value">24%</strong></article>
+            <article class="heat-tile heat-gastro"><span class="heat-name">Gastroenteritis</span><strong class="heat-value">18%</strong></article>
+            <article class="heat-tile heat-malaria"><span class="heat-name">Malaria</span><strong class="heat-value">16%</strong></article>
+            <article class="heat-tile heat-copd"><span class="heat-name">COPD</span><strong class="heat-value">14%</strong></article>
+            <article class="heat-tile heat-trauma"><span class="heat-name">Trauma</span><strong class="heat-value">11%</strong></article>
+            <article class="heat-tile heat-ncd"><span class="heat-name">NCDs</span><strong class="heat-value">8%</strong></article>
+            <article class="heat-tile heat-maternal"><span class="heat-name">Maternal ANC</span><strong class="heat-value">6%</strong></article>
+            <article class="heat-tile heat-snakebite"><span class="heat-name">Snakebite</span><strong class="heat-value">3%</strong></article>
+          </div>
+          <div class="heat-legend"><span>Higher Incidence</span><span class="heat-gradient" aria-hidden="true"></span><span>Lower Incidence</span></div>
+          <p class="heat-footnote">Illustrative distribution. First four (Sickle Cell 24%, Gastroenteritis 18%, Malaria 16%, Snakebite 3%) are from the project report.</p>
+        </section>
+        <section class="ops-card prediction-card" aria-labelledby="prediction-card-title">
+          <header class="ops-card-header"><div><h2 class="ops-card-title" id="prediction-card-title">AI Outbreak Prediction</h2><p class="ops-card-subtitle">Forward-looking surveillance alert</p></div><span class="live-pill">Predictive</span></header>
+          <div class="prediction-body" id="prediction-body">
+            <h3 class="prediction-alert-title"><span class="prediction-pulse" aria-hidden="true"></span>Predictive Alert: Malaria Spike Expected</h3>
+            <p class="prediction-copy">AI model forecasts a 34% rise in P. falciparum cases in Domkhedi within 14 days based on rainfall patterns, historical incidence, and current kiosk triage trends.</p>
+            <div class="prediction-recommendation"><strong>Recommended Action:</strong> Preemptive drone drop of Artemether-Lumefantrine (SKU WCK-VEC-08) to Kiosk #07 recommended within 72 hours.</div>
+            <button class="prediction-actions" id="acknowledge-prediction" type="button">Acknowledge &amp; Dispatch Drone</button>
+            <p class="prediction-footnote">Model: Prototype simulation. Not clinical advice.</p>
+          </div>
+          <div class="prediction-confirmation" id="prediction-confirmation" role="status" aria-live="polite" hidden><span class="prediction-check" aria-hidden="true">✓</span><span>Action Logged - Drone Dispatch Queued</span></div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">Academic prototype for Project Digital 1000 (MMS Rural Marketing). Not an operational Wockhardt programme. All data simulated.</footer>
+  <div class="modal-backdrop" id="scanner-modal" hidden>
+    <section class="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scanner-title" aria-describedby="scanner-description">
+      <button class="modal-close" id="close-scanner" type="button" aria-label="Close scanner">×</button>
+      <p class="language-eyebrow">Patient identification</p>
+      <h2 id="scanner-title">Scan ABHA QR Code</h2>
+      <p id="scanner-description">Place the QR code inside the frame to identify the patient.</p>
+      <div class="scanner-frame" aria-hidden="true">
+        <svg class="scanner-qr" viewBox="0 0 100 100" fill="none"><path d="M7 7h30v30H7zM63 7h30v30H63zM7 63h30v30H7z" stroke="currentColor" stroke-width="7"/><path d="M17 17h10v10H17zm56 0h10v10H73zM17 73h10v10H17zM48 8h7v7h-7zm0 14h7v12h-7zm-11 15h10v8H37zm17 4h10v8H54zm16 0h8v13h-8zM39 54h8v8h-8zm14 0h13v8H53zm22 7h7v10h-7zM39 68h8v11h-8zm14 4h8v7h-8zm13 8h10v8H66zm16-3h9v9h-9z" fill="currentColor"/></svg>
+        <span class="scan-beam"></span>
+      </div>
+      <p class="scanner-state" role="status" aria-live="polite">Scanner ready · looking for QR code</p>
+    </section>
+  </div>
+  <div class="ecg-modal-backdrop" id="ecg-modal" hidden>
+    <section class="ecg-modal" role="dialog" aria-modal="true" aria-labelledby="ecg-title" aria-describedby="ecg-telemetry">
+      <header class="ecg-modal-header">
+        <div><h2 id="ecg-title">3-Lead ECG Monitor</h2><p>Simulated cardiac electrical activity · Lead II</p></div>
+        <span class="ecg-live-indicator">Live</span>
+      </header>
+      <div class="ecg-screen"><canvas id="ecg-canvas" role="img" aria-label="Animated P-Q-R-S-T cardiac waveform"></canvas></div>
+      <p class="ecg-telemetry" id="ecg-telemetry">Telemetry: Delta-Compressed to &lt;14 KB (Simulated)</p>
+      <footer class="ecg-modal-footer"><button class="ecg-stop" id="stop-ecg" type="button">Stop</button></footer>
+    </section>
+  </div>
+  <div class="emergency-modal-backdrop" id="emergency-modal" hidden>
+    <section class="emergency-modal" role="alertdialog" aria-modal="true" aria-labelledby="emergency-title" aria-describedby="emergency-subtitle">
+      <header class="emergency-alert">
+        <span class="emergency-alert-icon" aria-hidden="true">!</span>
+        <div><h2 id="emergency-title">PRIORITY #1 QUEUE BYPASS - GOLDEN HOUR PROTOCOL ACTIVATED</h2><p id="emergency-subtitle">AI red-flag detected · Simulated ECG ST-elevation</p></div>
+      </header>
+      <div class="emergency-grid">
+        <article class="emergency-card">
+          <h3>Emergency Teleconsult</h3>
+          <div class="doctor-feed" role="img" aria-label="Simulated doctor video call connecting">
+            <span class="doctor-avatar" aria-hidden="true">DD</span>
+            <div class="doctor-video-label"><span class="connecting-dot"></span><span>Dr. Deshmukh (Wockhardt ER Nashik)</span></div>
+          </div>
+          <p class="emergency-status">WebRTC connection · Connecting to emergency physician…</p>
+        </article>
+        <article class="emergency-card">
+          <h3>Ambulance Dispatch</h3>
+          <div class="gps-map" role="img" aria-label="Simulated GPS location map"><span class="gps-pin" aria-hidden="true">⌖</span></div>
+          <div class="gps-readout"><span>GPS LOCATION</span><strong>Kiosk #01, Dhadgaon (simulated)</strong></div>
+          <p class="ambulance-status">State 108 Ambulance Dispatched</p>
+        </article>
+      </div>
+      <div class="emergency-return-row"><button class="emergency-return" id="resolve-emergency" type="button">Resolve &amp; Return to Dashboard</button></div>
+    </section>
+  </div>
+  <div class="vision-modal-backdrop" id="vision-modal-backdrop" hidden>
+    <section class="vision-modal" id="vision-modal" role="dialog" aria-modal="true" aria-labelledby="vision-title">
+      <header class="vision-header">
+        <div><h2 id="vision-title">AI-Powered Vision Screening</h2><p>Position your face inside the frame for a simulated screening.</p></div>
+      </header>
+      <div class="vision-camera" role="img" aria-label="Simulated live camera preview">
+        <svg class="camera-person" viewBox="0 0 120 150" fill="none" aria-hidden="true"><ellipse cx="60" cy="47" rx="31" ry="38" fill="currentColor" opacity=".72"/><path d="M19 145c2-36 16-55 41-55s39 19 41 55H19Z" fill="currentColor" opacity=".48"/><path d="M47 50h.01M73 50h.01M51 67c6 5 12 5 18 0" stroke="#162124" stroke-width="3" stroke-linecap="round"/></svg>
+        <span class="camera-frame" aria-hidden="true"></span><span class="camera-scanline" aria-hidden="true"></span>
+        <div class="camera-caption"><span class="camera-live">Camera preview</span><span>Simulation</span></div>
+      </div>
+      <div class="vision-progress" id="vision-progress" role="status" aria-live="polite"><span class="vision-spinner" aria-hidden="true"></span><span>AI Analyzing...</span></div>
+      <div class="vision-results" id="vision-results" aria-live="polite" hidden>
+        <article class="vision-result"><span class="vision-check" aria-hidden="true">✓</span><div><h3>Anemia Screening</h3><p>Low Risk</p></div></article>
+        <article class="vision-result"><span class="vision-check" aria-hidden="true">✓</span><div><h3>Jaundice Screening</h3><p>Low Risk</p></div></article>
+      </div>
+      <footer class="vision-actions"><button class="vision-action primary" id="capture-vision" type="button">Capture Image</button><button class="vision-action" id="close-vision" type="button" hidden>Close</button></footer>
+    </section>
+  </div>
+  <div class="teleconsult-backdrop" id="teleconsult-modal" hidden>
+    <div class="teleconsult-layout" role="dialog" aria-modal="true" aria-labelledby="call-doctor-name">
+      <section class="call-stage" aria-label="Simulated WebRTC video call">
+        <span class="call-doctor-label" id="call-doctor-name">Dr. Deshmukh · Wockhardt Hospital Nashik</span>
+        <span class="call-connected">Connected</span>
+        <span class="doctor-call-avatar" aria-hidden="true">DD</span>
+        <div class="patient-pip" role="img" aria-label="Patient video feed placeholder"><span class="patient-pip-avatar" aria-hidden="true">RP</span><span class="patient-pip-label">Patient Feed</span></div>
+      </section>
+      <aside class="call-telemetry" aria-label="Patient vitals telemetry">
+        <div><h2>Live Patient Vitals</h2><p class="call-telemetry-intro">Latest triage session · streamed to clinician</p></div>
+        <div class="call-metric-grid">
+          <div class="call-metric"><div class="call-metric-label">Blood Pressure</div><div class="call-metric-value">124/82 <small>mmHg</small></div></div>
+          <div class="call-metric"><div class="call-metric-label">SpO₂</div><div class="call-metric-value">98<small>%</small></div></div>
+          <div class="call-metric"><div class="call-metric-label">Temperature</div><div class="call-metric-value">36.6<small>°C</small></div></div>
+          <div class="call-metric"><div class="call-metric-label">Pulse</div><div class="call-metric-value">72 <small>bpm</small></div></div>
+          <div class="call-metric"><div class="call-metric-label">Blood Glucose</div><div class="call-metric-value">118 <small>mg/dL</small></div></div>
+        </div>
+        <div class="consultation-end-row"><button class="consultation-end" id="end-consultation" type="button">End Consultation</button></div>
+      </aside>
+    </div>
+  </div>
+  <div class="dispenser-backdrop" id="dispenser-modal" hidden>
+    <section class="dispenser-modal" role="dialog" aria-modal="true" aria-labelledby="dispenser-title">
+      <header class="dispenser-header">
+        <div><h2 id="dispenser-title">Automated Dispenser</h2><p>Closed-loop dual-auth prescription verification</p></div>
+        <button class="dispenser-close" id="close-dispenser" type="button" aria-label="Close dispenser">×</button>
+      </header>
+      <div class="dispenser-auth-content" id="dispenser-auth-content">
+      <div class="dispenser-columns">
+        <section class="dispenser-section" aria-labelledby="prescription-title">
+          <h3 id="prescription-title">e-Prescription</h3>
+          <p class="auth-person">Dr. Deshmukh<br>Wockhardt Nashik</p>
+          <span class="signed-badge">Digitally Signed</span>
+          <ul class="medicine-list">
+            <li><strong>SKU WCK-SCD-01</strong>Hydroxyurea 500mg</li>
+            <li><strong>SKU WCK-GAS-10</strong>WHO ORS</li>
+          </ul>
+        </section>
+        <section class="dispenser-section" aria-labelledby="pharmacist-title">
+          <h3 id="pharmacist-title">Pharmacist Co-Sign</h3>
+          <p class="auth-person" id="cosign-pharmacist">Dhadgaon Central Pharmacist</p>
+          <div class="cosign-state" id="cosign-state" aria-live="polite">Awaiting cloud co-signature…</div>
+          <p class="cosign-countdown" id="cosign-countdown">Cloud failover in <strong>01:30</strong></p>
+        </section>
+        <section class="dispenser-section" aria-labelledby="otp-title">
+          <h3 id="otp-title">OTP Verification</h3>
+          <div class="otp-display" id="otp-display" role="status" aria-label="No OTP entered"><span class="otp-digit">·</span><span class="otp-digit">·</span><span class="otp-digit">·</span><span class="otp-digit">·</span><span class="otp-digit">·</span><span class="otp-digit">·</span></div>
+          <div class="otp-keypad" id="otp-keypad" aria-label="OTP keypad">
+            <button class="otp-key" type="button" data-digit="1">1</button><button class="otp-key" type="button" data-digit="2">2</button><button class="otp-key" type="button" data-digit="3">3</button>
+            <button class="otp-key" type="button" data-digit="4">4</button><button class="otp-key" type="button" data-digit="5">5</button><button class="otp-key" type="button" data-digit="6">6</button>
+            <button class="otp-key" type="button" data-digit="7">7</button><button class="otp-key" type="button" data-digit="8">8</button><button class="otp-key" type="button" data-digit="9">9</button>
+            <button class="otp-key" type="button" data-action="clear">Clear</button><button class="otp-key" type="button" data-digit="0">0</button><button class="otp-key" type="button" data-action="backspace" aria-label="Delete last digit">⌫</button>
+          </div>
+          <button class="otp-autofill" id="autofill-otp" type="button">Demo only</button>
+        </section>
+      </div>
+      <footer class="dispenser-footer">
+        <p class="dispense-success" id="dispense-success" role="status" aria-live="polite" hidden>DUAL-AUTH VERIFIED - READY TO DISPENSE</p>
+        <button class="verify-dispense" id="verify-dispense" type="button" disabled>Verify &amp; Dispense</button>
+        <button class="verify-dispense" id="dispense-medicine" type="button" hidden>Dispense Medicine</button>
+      </footer>
+      </div>
+      <section class="dispense-sequence" id="dispense-sequence" aria-live="polite" hidden>
+        <h3 class="dispense-sequence-title" id="dispense-sequence-title">Mechanical Dispensing</h3>
+        <p class="dispense-sequence-copy" id="dispense-sequence-copy">NEMA 17 Stepper Motor: Rotating Coil...</p>
+        <div class="dispense-visual" id="dispense-visual">
+          <div class="coil-assembly" id="coil-assembly" aria-hidden="true">
+            <span class="coil-spindle"></span>
+            <svg class="coil-helix" viewBox="0 0 120 110" aria-hidden="true"><path d="M60 4 C20 4 20 18 60 18 S100 32 60 32 S20 46 60 46 S100 60 60 60 S20 74 60 74 S100 88 60 88 S20 102 60 102"/></svg>
+          </div>
+          <div class="laser-tray" id="laser-tray" hidden><span class="laser-beam"></span><span class="blister-pack" id="blister-pack">Rx</span></div>
+          <p class="motor-label" id="motor-label">NEMA 17 · stepper motor controller</p>
+        </div>
+        <div class="dispense-success-panel" id="dispense-complete" hidden>
+          <span class="dispense-success-icon" aria-hidden="true">✓</span>
+          <p class="dispense-success-copy">Dispensing Complete. Please collect your medicine from the tray.</p>
+          <button class="return-dashboard" id="return-dashboard" type="button">Return to Dashboard</button>
+        </div>
+      </section>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      const views = [...document.querySelectorAll('[role="tabpanel"]')];
+
+      function activate(tab, moveFocus = false) {
+        tabs.forEach(item => {
+          const selected = item === tab;
+          item.setAttribute('aria-selected', String(selected));
+          item.tabIndex = selected ? 0 : -1;
+        });
+        views.forEach(view => { view.hidden = view.id !== tab.getAttribute('aria-controls'); });
+        if (moveFocus) tab.focus();
+      }
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activate(tab));
+        tab.addEventListener('keydown', event => {
+          let nextIndex;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') nextIndex = 0;
+          else if (event.key === 'End') nextIndex = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          activate(tabs[nextIndex], true);
+        });
+      });
+
+      const mobileTabs = [...document.querySelectorAll('[data-mobile-tab]')];
+      const mobilePages = [...document.querySelectorAll('[data-mobile-page]')];
+      mobileTabs.forEach(tab => tab.addEventListener('click', () => {
+        const page = tab.dataset.mobileTab;
+        mobileTabs.forEach(item => {
+          const selected = item === tab;
+          item.classList.toggle('active', selected);
+          if (selected) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
+        });
+        mobilePages.forEach(item => { item.hidden = item.dataset.mobilePage !== page; });
+      }));
+      document.getElementById('acknowledge-prediction').addEventListener('click', () => {
+        document.getElementById('prediction-body').hidden = true;
+        document.getElementById('prediction-confirmation').hidden = false;
+      });
+
+      let walletBalance = 1450;
+      let rechargeTimer;
+      let claimSecondsRemaining = 14 * 60 + 20;
+      const claimCountdown = document.getElementById('claim-countdown');
+      const claimTimer = setInterval(() => {
+        if (claimSecondsRemaining > 0) claimSecondsRemaining--;
+        const minutes = Math.floor(claimSecondsRemaining / 60);
+        const seconds = String(claimSecondsRemaining % 60).padStart(2, '0');
+        claimCountdown.textContent = minutes + 'm ' + seconds + 's';
+        if (claimSecondsRemaining === 0) clearInterval(claimTimer);
+      }, 1000);
+      const bleToggle = document.getElementById('ble-toggle');
+      const bleStatus = document.getElementById('ble-status');
+      let bleTimers = [];
+      function setBleStatus(message, active) {
+        bleStatus.querySelector('span').textContent = message;
+        bleStatus.classList.toggle('active', active);
+      }
+      bleToggle.addEventListener('click', () => {
+        const enabled = bleToggle.getAttribute('aria-checked') !== 'true';
+        bleToggle.setAttribute('aria-checked', String(enabled));
+        bleTimers.forEach(clearTimeout);
+        bleTimers = [];
+        if (!enabled) {
+          setBleStatus('BLE Beacon Off', false);
+          return;
+        }
+        setBleStatus('BLE Beacon Detected: Kiosk #03 (Within 10m)', true);
+        bleTimers.push(setTimeout(() => {
+          setBleStatus('Syncing SQLite records...', true);
+          bleTimers.push(setTimeout(() => {
+            setBleStatus('Sync Complete: 100%', false);
+          }, 2000));
+        }, 2000));
+      });
+      const consultModal = document.getElementById('consult-modal');
+      document.getElementById('start-consult').addEventListener('click', () => { consultModal.hidden = false; });
+      document.getElementById('end-consult').addEventListener('click', () => { consultModal.hidden = true; });
+      document.getElementById('subscribe-pass').addEventListener('click', event => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.textContent = 'Processing UPI payment…';
+        setTimeout(() => {
+          document.getElementById('pass-price').textContent = 'Active - Renews in 30 days';
+          document.getElementById('pass-status').textContent = 'Your Care-for-Home Pass is active.';
+          button.textContent = 'Subscription Active';
+        }, 1000);
+      });
+      document.getElementById('request-nurse').addEventListener('click', event => {
+        event.currentTarget.disabled = true;
+        event.currentTarget.textContent = 'Request Sent';
+        document.getElementById('nurse-status').textContent = 'Home visit requested. A nurse will contact you shortly.';
+      });
+      const rechargeOverlay = document.getElementById('recharge-overlay');
+      const rechargeState = document.getElementById('recharge-state');
+      const rechargeOptions = [...document.querySelectorAll('.recharge-option')];
+      const rechargeClose = document.getElementById('close-recharge');
+      function formatRupees(amount) {
+        return '₹' + amount.toLocaleString('en-IN');
+      }
+      document.getElementById('open-recharge').addEventListener('click', () => {
+        rechargeState.textContent = '';
+        rechargeOverlay.hidden = false;
+        rechargeClose.focus();
+      });
+      function closeRecharge() {
+        clearTimeout(rechargeTimer);
+        rechargeOptions.forEach(option => { option.disabled = false; });
+        rechargeOverlay.hidden = true;
+        document.getElementById('open-recharge').focus();
+      }
+      rechargeClose.addEventListener('click', closeRecharge);
+      rechargeOverlay.addEventListener('click', event => {
+        if (event.target === rechargeOverlay && rechargeOptions.every(option => !option.disabled)) closeRecharge();
+      });
+      rechargeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          const amount = Number(option.dataset.amount);
+          const provider = option.dataset.provider;
+          rechargeOptions.forEach(item => { item.disabled = true; });
+          rechargeClose.disabled = true;
+          rechargeState.textContent = 'Connecting to ' + provider + '…';
+          rechargeTimer = setTimeout(() => {
+            walletBalance += amount;
+            document.getElementById('wallet-balance').textContent = formatRupees(walletBalance);
+            rechargeOptions.forEach(item => { item.disabled = false; });
+            rechargeClose.disabled = false;
+            rechargeOverlay.hidden = true;
+            document.getElementById('open-recharge').focus();
+          }, 1000);
+        });
+      });
+
+      const status = document.getElementById('audio-status');
+      let audioContext;
+      const languageStage = document.getElementById('language-stage');
+      const privacyStage = document.getElementById('privacy-stage');
+      const kioskDashboard = document.getElementById('kiosk-dashboard');
+      const bloodPressureStage = document.getElementById('blood-pressure-stage');
+      const kioskChatSection = document.getElementById('kiosk-chat-section');
+      let networkOnline = true;
+      const networkToggle = document.getElementById('network-toggle');
+      networkToggle.addEventListener('click', () => {
+        networkOnline = !networkOnline;
+        networkToggle.classList.toggle('offline', !networkOnline);
+        networkToggle.setAttribute('aria-pressed', String(networkOnline));
+        networkToggle.textContent = networkOnline ? 'Online: Cloud AI' : 'Offline: Local Edge AI';
+      });
+      const kioskI18n = {
+        English: {
+          dashboard: 'Kiosk Dashboard', bpTitle: 'Blood Pressure / Vitals Check', bpStart: 'Start Cuff',
+          ppgTitle: 'Pulse Oximetry', ppgStart: 'Start Finger Clip',
+          tempTitle: 'Contactless Forehead Temperature', tempStart: 'Start Scan',
+          triage1: 'Diagnostic triage · 01', triage2: 'Diagnostic triage · 02', triage3: 'Diagnostic triage · 03',
+          bpInstruction: 'Place your arm in the cuff and stay still during measurement.',
+          ppgInstruction: 'Place your fingertip in the clip and hold still.',
+          tempInstruction: 'Hold still while the infrared sensor takes a reading.',
+          ready: 'Ready when you are.', measuring: 'Measuring…', cuffInflating: 'Cuff inflating. Please stay still.', audioUnavailable: 'Audio is unavailable in this browser.', backDashboard: '← Back to dashboard',
+          sensorIdle: 'Sensor idle', sensorReading: 'Reading signal', sensorScanning: 'Scanning',
+          readingComplete: 'Reading complete', oxygen: 'Oxygen saturation', pulseRate: 'Pulse rate',
+          backDiagnostics: '← Back to diagnostics', chatTitle: 'AI Health Assistant',
+          chatSubtitle: 'Ask a question about how you’re feeling',
+          chatWelcome: 'Hello. Tell me what’s bothering you, and I’ll try to help.',
+          chatPlaceholder: 'Describe your symptoms…', chatReply: 'I can help with that. Can you tell me more about your symptoms?'
+        },
+        Marathi: {
+          dashboard: 'किऑस्क डॅशबोर्ड', bpTitle: 'रक्तदाब', bpStart: 'कफ सुरू करा',
+          ppgTitle: 'नाडी ऑक्सिमेट्री', ppgStart: 'बोटाची क्लिप सुरू करा',
+          tempTitle: 'कपाळाचे संपर्करहित तापमान', tempStart: 'स्कॅन सुरू करा',
+          triage1: 'तपासणी · ०१', triage2: 'तपासणी · ०२', triage3: 'तपासणी · ०३',
+          bpInstruction: 'हात कफमध्ये ठेवा आणि मोजणीदरम्यान स्थिर रहा.',
+          ppgInstruction: 'बोट क्लिपमध्ये ठेवा आणि स्थिर रहा.',
+          tempInstruction: 'इन्फ्रारेड सेन्सर मोजणी करेपर्यंत स्थिर रहा.',
+          ready: 'तयार झाल्यावर सुरू करा.', measuring: 'मोजत आहे…', cuffInflating: 'कफ फुगत आहे. स्थिर रहा.', audioUnavailable: 'या ब्राउझरमध्ये आवाज उपलब्ध नाही.', backDashboard: '← डॅशबोर्डवर परत',
+          sensorIdle: 'सेन्सर तयार', sensorReading: 'नाडी मोजत आहे', sensorScanning: 'स्कॅन सुरू आहे',
+          readingComplete: 'मोजणी पूर्ण', oxygen: 'रक्तातील ऑक्सिजन', pulseRate: 'नाडीचा वेग',
+          backDiagnostics: '← तपासण्यांकडे परत', chatTitle: 'आरोग्य सहाय्यक',
+          chatSubtitle: 'तुमच्या तब्येतीबद्दल प्रश्न विचारा',
+          chatWelcome: 'नमस्कार. तुम्हाला काय त्रास होतोय ते सांगा; मी मदत करण्याचा प्रयत्न करेन.',
+          chatPlaceholder: 'तुमची लक्षणे सांगा…', chatReply: 'मी मदत करू शकतो. तुमच्या लक्षणांबद्दल आणखी सांगाल का?'
+        },
+        Hindi: {
+          dashboard: 'कियोस्क डैशबोर्ड', bpTitle: 'रक्तचाप', bpStart: 'कफ शुरू करें',
+          ppgTitle: 'नाड़ी ऑक्सीमेट्री', ppgStart: 'फिंगर क्लिप शुरू करें',
+          tempTitle: 'बिना संपर्क माथे का तापमान', tempStart: 'स्कैन शुरू करें',
+          triage1: 'जांच · ०१', triage2: 'जांच · ०२', triage3: 'जांच · ०३',
+          bpInstruction: 'बाँह को कफ में रखें और माप के दौरान स्थिर रहें।',
+          ppgInstruction: 'उंगली को क्लिप में रखें और स्थिर रहें।',
+          tempInstruction: 'इन्फ्रारेड सेंसर के मापने तक स्थिर रहें।',
+          ready: 'तैयार होने पर शुरू करें।', measuring: 'माप हो रहा है…', cuffInflating: 'कफ फूल रहा है। कृपया स्थिर रहें।', audioUnavailable: 'इस ब्राउज़र में ऑडियो उपलब्ध नहीं है।', backDashboard: '← डैशबोर्ड पर लौटें',
+          sensorIdle: 'सेंसर तैयार', sensorReading: 'नाड़ी मापी जा रही है', sensorScanning: 'स्कैन हो रहा है',
+          readingComplete: 'माप पूरा हुआ', oxygen: 'रक्त में ऑक्सीजन', pulseRate: 'नाड़ी दर',
+          backDiagnostics: '← जांच पर लौटें', chatTitle: 'स्वास्थ्य सहायक',
+          chatSubtitle: 'अपनी तबीयत के बारे में सवाल पूछें',
+          chatWelcome: 'नमस्ते। आपको क्या परेशानी है, बताइए। मैं मदद करने की कोशिश करूँगा।',
+          chatPlaceholder: 'अपने लक्षण बताएं…', chatReply: 'मैं मदद कर सकता हूँ। अपने लक्षणों के बारे में कुछ और बताएँ?'
+        },
+        Pawari: {
+          dashboard: 'किऑस्क डॅशबोर्ड', bpTitle: 'बीपी तपासणी', bpStart: 'कफ चालू करा',
+          ppgTitle: 'नाडी अन ऑक्सिजन तपासणी', ppgStart: 'बोट क्लिप चालू करा',
+          tempTitle: 'कपाळ तापमान तपासणी', tempStart: 'स्कॅन चालू करा',
+          triage1: 'तपासणी · ०१', triage2: 'तपासणी · ०२', triage3: 'तपासणी · ०३',
+          bpInstruction: 'हात कफमध्ये ठेवा, अन मोजताना शांत बसा.',
+          ppgInstruction: 'बोट क्लिपमध्ये ठेवा, अन स्थिर बसा.',
+          tempInstruction: 'सेन्सर तपासेपर्यंत शांत बसा.',
+          ready: 'तुम्ही तयार असाल तेव्हा सुरू करा.', measuring: 'मोजत आहे…', cuffInflating: 'कफ फुगत आहे, शांत बसा.', audioUnavailable: 'या ब्राउझरमध्ये आवाज नाही.', backDashboard: '← डॅशबोर्ड परत',
+          sensorIdle: 'सेन्सर तयार', sensorReading: 'नाडी मोजत आहे', sensorScanning: 'तपासत आहे',
+          readingComplete: 'तपासणी झाली', oxygen: 'रक्त ऑक्सिजन', pulseRate: 'नाडी वेग',
+          backDiagnostics: '← तपासणी परत', chatTitle: 'आरोग्य मदत',
+          chatSubtitle: 'तुमच्या तब्येतीबद्दल विचारा',
+          chatWelcome: 'नमस्कार. तुमाले काय त्रास होय ते सांगा. मी मदत करतो.',
+          chatPlaceholder: 'तुमचा त्रास लिहा…', chatReply: 'मी मदत करतो. तुमच्या त्रासाबद्दल आणखी सांगा?'
+        },
+        Bhili: {
+          dashboard: 'किऑस्क डॅशबोर्ड', bpTitle: 'बीपी तपासणी', bpStart: 'कफ सुरू करा',
+          ppgTitle: 'नाड़ी ऑक्सिजन तपासणी', ppgStart: 'बोट क्लिप सुरू करा',
+          tempTitle: 'माथे का तापमान जांच', tempStart: 'स्कैन शुरू करें',
+          triage1: 'जांच · ०१', triage2: 'जांच · ०२', triage3: 'जांच · ०३',
+          bpInstruction: 'हाथ कफ में रखो, मापते समय शांत बैठो।',
+          ppgInstruction: 'उंगली क्लिप में रखो और स्थिर बैठो।',
+          tempInstruction: 'सेंसर जांच करे तब तक स्थिर बैठो।',
+          ready: 'तैयार हो तो शुरू करो।', measuring: 'माप रहे हैं…', cuffInflating: 'कफ फूल रहा है, शांत बैठो।', audioUnavailable: 'इस ब्राउज़र में आवाज़ नहीं है।', backDashboard: '← डैशबोर्ड पर लौटो',
+          sensorIdle: 'सेंसर तैयार', sensorReading: 'नाड़ी माप रहे हैं', sensorScanning: 'स्कैन हो रहा है',
+          readingComplete: 'जांच पूरी हुई', oxygen: 'खून में ऑक्सिजन', pulseRate: 'नाड़ी की गति',
+          backDiagnostics: '← जांच पर लौटो', chatTitle: 'आरोग्य मदद',
+          chatSubtitle: 'अपनी तबीयत के बारे में पूछो',
+          chatWelcome: 'नमस्कार। तुमको क्या तकलीफ है, बताओ। मैं मदद करूंगा।',
+          chatPlaceholder: 'अपनी तकलीफ लिखो…', chatReply: 'मैं मदद करूंगा। अपनी तकलीफ के बारे में और बताओ?'
+        },
+      };
+      function applyKioskLanguage(language) {
+        const dictionary = kioskI18n[language] || kioskI18n.English;
+        document.querySelectorAll('#view-kiosk [data-i18n]').forEach(element => {
+          const translation = dictionary[element.dataset.i18n];
+          if (translation) element.textContent = translation;
+        });
+        document.querySelectorAll('#view-kiosk [data-i18n-placeholder]').forEach(element => {
+          const translation = dictionary[element.dataset.i18nPlaceholder];
+          if (translation) element.placeholder = translation;
+        });
+        document.documentElement.lang = speechLanguage[language] || 'en-IN';
+      }
+      const t = key => (kioskI18n[selectedDialect] || kioskI18n.English)[key] || kioskI18n.English[key];
+      let selectedDialect = 'English';
+      const speechLanguage = {
+        Pawari: 'hi-IN',
+        Bhili: 'hi-IN',
+        Marathi: 'mr-IN',
+        Hindi: 'hi-IN',
+        English: 'en-IN'
+      };
+      document.querySelectorAll('.language-button').forEach(button => {
+        button.addEventListener('click', async () => {
+          selectedDialect = button.dataset.language;
+          applyKioskLanguage(selectedDialect);
+          languageStage.hidden = true;
+          privacyStage.hidden = sessionStorage.getItem('swasthyaPrivacyAccepted') === 'true';
+          kioskDashboard.hidden = !privacyStage.hidden;
+          kioskChatSection.hidden = !privacyStage.hidden;
+          bloodPressureStage.hidden = true;
+          if (button.dataset.language !== 'Pawari') {
+            status.textContent = `${button.dataset.language} selected.`;
+            return;
+          }
+          try {
+            if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) throw new Error('Speech synthesis unavailable');
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance('तूमरो बीपी, नाडी अन ताप तपासने साठी होय दाबा');
+            utterance.lang = 'hi-IN';
+            utterance.rate = 0.88;
+            window.speechSynthesis.speak(utterance);
+            status.textContent = 'Pawari selected · welcome prompt playing.';
+          } catch (error) {
+            status.textContent = 'Pawari selected · speech audio is unavailable in this browser.';
+          }
+        });
+      });
+
+      document.getElementById('agree-privacy').addEventListener('click', () => {
+        sessionStorage.setItem('swasthyaPrivacyAccepted', 'true');
+        privacyStage.hidden = true;
+        kioskDashboard.hidden = false;
+        kioskChatSection.hidden = false;
+        document.getElementById('network-toggle').focus();
+      });
+      document.getElementById('privacy-audio').addEventListener('click', () => {
+        const speechText = {
+          English: 'What we record: your blood pressure, oxygen level, symptoms, and doctor advice. Why: so your doctor remembers your medical history when you return. Who can see it: only your licensed consulting doctor and dispensing pharmacist. What we never do: we never sell your name or personal data to commercial advertisers. Your ethical choice: you receive full healthcare even if you decline secondary research.',
+          Hindi: 'हम आपका रक्तचाप, ऑक्सीजन स्तर, लक्षण और डॉक्टर की सलाह दर्ज करते हैं। ताकि लौटने पर डॉक्टर आपका इतिहास याद रख सकें। इसे केवल आपका लाइसेंस प्राप्त डॉक्टर और फार्मासिस्ट देख सकते हैं। हम आपका नाम या निजी जानकारी विज्ञापनदाताओं को कभी नहीं बेचते। शोध से मना करने पर भी आपको पूरी स्वास्थ्य सेवा मिलेगी।',
+          Marathi: 'आम्ही तुमचा रक्तदाब, ऑक्सिजन पातळी, लक्षणे आणि डॉक्टरांचा सल्ला नोंदवतो. तुम्ही परत आल्यावर डॉक्टरांना तुमचा वैद्यकीय इतिहास लक्षात राहावा म्हणून. हे फक्त परवानाधारक डॉक्टर आणि औषध वितरक पाहू शकतात. आम्ही तुमचे नाव किंवा वैयक्तिक माहिती जाहिरातदारांना कधीही विकत नाही. दुय्यम संशोधन नाकारले तरी तुम्हाला पूर्ण आरोग्यसेवा मिळेल.',
+          Pawari: 'आम्ही तुमचा रक्तदाब, ऑक्सिजन पातळी, लक्षणे आणि डॉक्टरांचा सल्ला नोंदतो. परत आल्यावर डॉक्टरांना तुमचा इतिहास लक्षात राहावा म्हणून. हे फक्त डॉक्टर आणि औषध वितरक पाहू शकतात. तुमचे नाव आणि वैयक्तिक माहिती जाहिरातदारांना विकली जात नाही. संशोधन नाकारले तरी पूर्ण उपचार मिळतील.',
+          Bhili: 'हम आपका रक्तचाप, ऑक्सीजन, लक्षण और डॉक्टर की सलाह लिखते हैं ताकि लौटने पर डॉक्टर याद रख सकें। इसे केवल डॉक्टर और दवा देने वाला देख सकते हैं। आपका नाम और निजी जानकारी विज्ञापन वालों को कभी नहीं बेचते। शोध में मना करने पर भी आपको पूरा इलाज मिलेगा।'
+        };
+        const audioStatus = document.getElementById('privacy-audio-status');
+        if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) { audioStatus.textContent = 'Audio playback is unavailable in this browser.'; return; }
+        const utterance = new SpeechSynthesisUtterance(speechText[selectedDialect] || speechText.English);
+        utterance.lang = speechLanguage[selectedDialect] || 'en-IN';
+        utterance.rate = 0.88;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        audioStatus.textContent = 'Playing privacy information aloud.';
+      });
+
+      function runRapidDiagnostic(buttonId, resultId, resultText) {
+        const button = document.getElementById(buttonId);
+        const result = document.getElementById(resultId);
+        button.addEventListener('click', () => {
+          button.disabled = true;
+          const originalLabel = button.textContent;
+          button.textContent = 'Testing…';
+          result.hidden = true;
+          setTimeout(() => {
+            result.textContent = resultText();
+            result.hidden = false;
+            button.textContent = originalLabel;
+            button.disabled = false;
+          }, 2000);
+        });
+      }
+      runRapidDiagnostic('start-glucose', 'glucose-result', () => 'Blood Glucose: ' + (105 + Math.floor(Math.random() * 14)) + ' mg/dL');
+      runRapidDiagnostic('start-sickle', 'sickle-result', () => 'Screening: Negative');
+      runRapidDiagnostic('start-malaria', 'malaria-result', () => 'Pf: Negative / Pv: Negative');
+      document.getElementById('start-stethoscope').addEventListener('click', event => {
+        const button = event.currentTarget;
+        const result = document.getElementById('stethoscope-result');
+        button.disabled = true;
+        button.textContent = 'Listening…';
+        result.hidden = true;
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            const context = audioContext || (audioContext = new AudioContextClass());
+            if (context.state === 'suspended') context.resume();
+            [0, .55, 1.1].forEach((delay, index) => {
+              const oscillator = context.createOscillator();
+              const gain = context.createGain();
+              oscillator.type = 'sine'; oscillator.frequency.value = index % 2 ? 58 : 72;
+              gain.gain.setValueAtTime(.0001, context.currentTime + delay);
+              gain.gain.exponentialRampToValueAtTime(.13, context.currentTime + delay + .02);
+              gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + delay + .22);
+              oscillator.connect(gain); gain.connect(context.destination);
+              oscillator.start(context.currentTime + delay); oscillator.stop(context.currentTime + delay + .24);
+            });
+          }
+        } catch (error) { /* Simulated result remains available without audio output. */ }
+        setTimeout(() => { result.textContent = 'Auscultation Complete — Normal S1/S2'; result.hidden = false; button.textContent = 'Start Test'; button.disabled = false; }, 1600);
+      });
+
+      document.getElementById('open-bp').addEventListener('click', () => {
+        kioskDashboard.hidden = true;
+        kioskChatSection.hidden = true;
+        bloodPressureStage.hidden = false;
+      });
+      const ppgStage = document.getElementById('pulse-oximetry-stage');
+      const ppgCanvas = document.getElementById('ppg-canvas');
+      const ppgContext = ppgCanvas.getContext('2d');
+      const ppgState = document.getElementById('ppg-state');
+      let ppgAnimation;
+      let ppgTimer;
+      let ppgStart;
+      let ppgActive = false;
+
+      function drawPpg(timestamp) {
+        if (!ppgActive) return;
+        const rect = ppgCanvas.getBoundingClientRect();
+        const pixelRatio = window.devicePixelRatio || 1;
+        const width = Math.max(1, Math.floor(rect.width * pixelRatio));
+        const height = Math.max(1, Math.floor(rect.height * pixelRatio));
+        if (ppgCanvas.width !== width || ppgCanvas.height !== height) {
+          ppgCanvas.width = width;
+          ppgCanvas.height = height;
+        }
+        ppgContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ppgContext.clearRect(0, 0, rect.width, rect.height);
+        const mid = rect.height * .55;
+        const amplitude = Math.min(43, rect.height * .23);
+        const period = Math.max(1, rect.width * .24);
+        const offset = (timestamp - ppgStart) * .11;
+        ppgContext.beginPath();
+        ppgContext.lineWidth = 2.4;
+        ppgContext.strokeStyle = '#53d6ae';
+        ppgContext.shadowColor = 'rgba(83,214,174,.7)';
+        ppgContext.shadowBlur = 10;
+        for (let x = 0; x <= rect.width; x += 2) {
+          const phase = ((x + offset) % period) / period;
+          const pulse = Math.exp(-Math.pow((phase - .28) / .075, 2));
+          const dicrotic = Math.exp(-Math.pow((phase - .48) / .12, 2)) * .28;
+          const y = mid - amplitude * (pulse + dicrotic) + Math.sin((x + offset) * .025) * 1.3;
+          if (x === 0) ppgContext.moveTo(x, y); else ppgContext.lineTo(x, y);
+        }
+        ppgContext.stroke();
+        ppgContext.shadowBlur = 0;
+        ppgAnimation = requestAnimationFrame(drawPpg);
+      }
+
+      function stopPpg() {
+        ppgActive = false;
+        cancelAnimationFrame(ppgAnimation);
+        clearTimeout(ppgTimer);
+      }
+
+      document.getElementById('open-ppg').addEventListener('click', () => {
+        kioskDashboard.hidden = true;
+        kioskChatSection.hidden = true;
+        bloodPressureStage.hidden = true;
+        ppgStage.hidden = false;
+        ppgState.textContent = t('sensorReading');
+        ppgState.classList.add('active');
+        document.getElementById('spo2-result').textContent = '—%';
+        document.getElementById('pulse-result').textContent = '— bpm';
+        document.getElementById('spo2-result').classList.add('pending');
+        document.getElementById('pulse-result').classList.add('pending');
+        stopPpg();
+        ppgActive = true;
+        ppgStart = performance.now();
+        ppgAnimation = requestAnimationFrame(drawPpg);
+        ppgTimer = setTimeout(() => {
+          document.getElementById('spo2-result').textContent = '98%';
+          document.getElementById('pulse-result').textContent = '72 bpm';
+          document.getElementById('spo2-result').classList.remove('pending');
+          document.getElementById('pulse-result').classList.remove('pending');
+          ppgState.textContent = t('readingComplete');
+          ppgState.classList.remove('active');
+        }, 2000);
+      });
+
+      document.getElementById('back-from-ppg').addEventListener('click', () => {
+        stopPpg();
+        ppgStage.hidden = true;
+        kioskDashboard.hidden = false;
+        kioskChatSection.hidden = false;
+      });
+
+      const temperatureStage = document.getElementById('temperature-stage');
+      const temperatureState = document.getElementById('temperature-state');
+      let temperatureTimer;
+      document.getElementById('open-temperature').addEventListener('click', () => {
+        kioskDashboard.hidden = true;
+        kioskChatSection.hidden = true;
+        bloodPressureStage.hidden = true;
+        ppgStage.hidden = true;
+        temperatureStage.hidden = false;
+        temperatureStage.classList.add('scanning');
+        temperatureState.textContent = t('sensorScanning');
+        temperatureState.classList.add('active');
+        const result = document.getElementById('temperature-result');
+        result.innerHTML = '— <span class="temperature-units">°C</span>';
+        result.classList.add('pending');
+        stopPpg();
+
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) throw new Error('Web Audio is unavailable');
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === 'suspended') audioContext.resume();
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.075, now + 0.025);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + 0.17);
+        } catch (error) {
+          temperatureState.textContent = t('sensorScanning');
+        }
+        clearTimeout(temperatureTimer);
+        temperatureTimer = setTimeout(() => {
+          temperatureStage.classList.remove('scanning');
+          temperatureState.textContent = t('readingComplete');
+          temperatureState.classList.remove('active');
+          result.innerHTML = '36.6 <span class="temperature-units">°C</span>';
+          result.classList.remove('pending');
+        }, 2000);
+      });
+
+      document.getElementById('back-from-temperature').addEventListener('click', () => {
+        clearTimeout(temperatureTimer);
+        temperatureStage.classList.remove('scanning');
+        temperatureStage.hidden = true;
+        kioskDashboard.hidden = false;
+        kioskChatSection.hidden = false;
+      });
+
+      const scannerModal = document.getElementById('scanner-modal');
+      const openScanner = document.getElementById('open-scanner');
+      const closeScanner = document.getElementById('close-scanner');
+      openScanner.addEventListener('click', () => {
+        scannerModal.hidden = false;
+        closeScanner.focus();
+      });
+      function dismissScanner() {
+        scannerModal.hidden = true;
+        openScanner.focus();
+      }
+      closeScanner.addEventListener('click', dismissScanner);
+      scannerModal.addEventListener('click', event => { if (event.target === scannerModal) dismissScanner(); });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !scannerModal.hidden) dismissScanner();
+      });
+
+      const startCuff = document.getElementById('start-cuff');
+      const cuff = document.getElementById('cuff');
+      let cuffTimer;
+      startCuff.addEventListener('click', async () => {
+        clearTimeout(cuffTimer);
+        startCuff.disabled = true;
+        startCuff.textContent = t('measuring');
+        document.getElementById('bp-reading').textContent = '— / —';
+        document.getElementById('bp-status').textContent = t('cuffInflating');
+        document.getElementById('cuff-label').textContent = 'INFLATING';
+        cuff.classList.remove('is-deflating');
+        cuff.classList.add('is-inflating');
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) throw new Error('Web Audio is unavailable');
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === 'suspended') await audioContext.resume();
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(420, now);
+          oscillator.frequency.linearRampToValueAtTime(620, now + 0.35);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(0.08, now + 0.04);
+          gain.gain.setValueAtTime(0.08, now + 0.3);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + 0.5);
+        } catch (error) {
+          document.getElementById('bp-status').textContent = t('audioUnavailable');
+        }
+        cuffTimer = setTimeout(() => {
+          cuff.classList.remove('is-inflating');
+          cuff.classList.add('is-deflating');
+          document.getElementById('cuff-label').textContent = 'DEFLATING';
+          document.getElementById('bp-status').textContent = t('readingComplete');
+          document.getElementById('bp-reading').textContent = '124 / 82';
+          startCuff.disabled = false;
+          startCuff.textContent = t('bpStart');
+        }, 3400);
+      });
+
+      document.getElementById('back-to-languages').addEventListener('click', () => {
+        clearTimeout(cuffTimer);
+        kioskDashboard.hidden = false;
+        kioskChatSection.hidden = false;
+        stopPpg();
+        ppgStage.hidden = true;
+        clearTimeout(temperatureTimer);
+        temperatureStage.classList.remove('scanning');
+        temperatureStage.hidden = true;
+        bloodPressureStage.hidden = true;
+      });
+
+      const ecgModal = document.getElementById('ecg-modal');
+      const ecgCanvas = document.getElementById('ecg-canvas');
+      const ecgContext = ecgCanvas.getContext('2d');
+      let ecgFrame;
+      let ecgActive = false;
+      let ecgStartTime = 0;
+
+      function cardiacWave(phase) {
+        const gaussian = (center, width, amplitude) => amplitude * Math.exp(-Math.pow((phase - center) / width, 2));
+        let value = 0;
+        value += gaussian(.18, .035, .12);   // P wave
+        value += gaussian(.385, .012, -.16); // Q wave
+        value += gaussian(.405, .009, 1.05); // R wave
+        value += gaussian(.428, .014, -.28); // S wave
+        value += gaussian(.68, .075, .3);    // T wave
+        return value;
+      }
+
+      function drawEcg(timestamp) {
+        if (!ecgActive) return;
+        const bounds = ecgCanvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        const width = Math.max(1, Math.floor(bounds.width * ratio));
+        const height = Math.max(1, Math.floor(bounds.height * ratio));
+        if (ecgCanvas.width !== width || ecgCanvas.height !== height) {
+          ecgCanvas.width = width;
+          ecgCanvas.height = height;
+        }
+        ecgContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        const w = bounds.width;
+        const h = bounds.height;
+        ecgContext.fillStyle = '#020605';
+        ecgContext.fillRect(0, 0, w, h);
+
+        const smallGrid = 20;
+        ecgContext.lineWidth = 1;
+        ecgContext.strokeStyle = 'rgba(77,166,105,.11)';
+        ecgContext.beginPath();
+        for (let x = 0; x <= w; x += smallGrid) { ecgContext.moveTo(x, 0); ecgContext.lineTo(x, h); }
+        for (let y = 0; y <= h; y += smallGrid) { ecgContext.moveTo(0, y); ecgContext.lineTo(w, y); }
+        ecgContext.stroke();
+        ecgContext.strokeStyle = 'rgba(77,166,105,.19)';
+        ecgContext.beginPath();
+        for (let x = 0; x <= w; x += smallGrid * 5) { ecgContext.moveTo(x, 0); ecgContext.lineTo(x, h); }
+        for (let y = 0; y <= h; y += smallGrid * 5) { ecgContext.moveTo(0, y); ecgContext.lineTo(w, y); }
+        ecgContext.stroke();
+
+        const elapsed = timestamp - ecgStartTime;
+        const centerY = h * .53;
+        const amplitude = Math.min(h * .31, 100);
+        const cycleMs = 900;
+        const offset = (elapsed * .16) % w;
+        ecgContext.beginPath();
+        ecgContext.lineWidth = 2.2;
+        ecgContext.strokeStyle = '#63f29a';
+        ecgContext.shadowColor = 'rgba(77,255,133,.8)';
+        ecgContext.shadowBlur = 9;
+        for (let x = 0; x <= w; x += 1.5) {
+          const sourceX = (x + offset) % w;
+          const phase = ((elapsed % cycleMs) / cycleMs + sourceX / w) % 1;
+          const y = centerY - cardiacWave(phase) * amplitude + Math.sin((sourceX + elapsed * .025) * .08) * .65;
+          if (x === 0) ecgContext.moveTo(x, y); else ecgContext.lineTo(x, y);
+        }
+        ecgContext.stroke();
+
+        const sweepX = w - offset;
+        const glow = ecgContext.createLinearGradient(sweepX - 26, 0, sweepX + 2, 0);
+        glow.addColorStop(0, 'rgba(76,255,134,0)');
+        glow.addColorStop(1, 'rgba(76,255,134,.18)');
+        ecgContext.shadowBlur = 0;
+        ecgContext.fillStyle = glow;
+        ecgContext.fillRect(sweepX - 26, 0, 28, h);
+        ecgFrame = requestAnimationFrame(drawEcg);
+      }
+
+      function stopEcg() {
+        ecgActive = false;
+        cancelAnimationFrame(ecgFrame);
+        ecgModal.hidden = true;
+      }
+
+      document.getElementById('open-ecg').addEventListener('click', () => {
+        ecgModal.hidden = false;
+        ecgActive = true;
+        ecgStartTime = performance.now();
+        ecgFrame = requestAnimationFrame(drawEcg);
+        document.getElementById('stop-ecg').focus();
+      });
+      document.getElementById('stop-ecg').addEventListener('click', stopEcg);
+      ecgModal.addEventListener('click', event => { if (event.target === ecgModal) stopEcg(); });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !ecgModal.hidden) stopEcg();
+      });
+
+      const emergencyModal = document.getElementById('emergency-modal');
+      document.getElementById('simulate-emergency').addEventListener('click', () => {
+        emergencyModal.hidden = false;
+        document.getElementById('resolve-emergency').focus();
+      });
+      function resolveEmergency() {
+        emergencyModal.hidden = true;
+        document.getElementById('simulate-emergency').focus();
+      }
+      document.getElementById('resolve-emergency').addEventListener('click', resolveEmergency);
+
+      const visionBackdrop = document.getElementById('vision-modal-backdrop');
+      const visionModal = document.getElementById('vision-modal');
+      const captureVision = document.getElementById('capture-vision');
+      const closeVision = document.getElementById('close-vision');
+      let visionTimer;
+      document.getElementById('open-vision').addEventListener('click', () => {
+        visionBackdrop.hidden = false;
+        visionModal.classList.remove('analyzing');
+        document.getElementById('vision-results').hidden = true;
+        captureVision.hidden = false;
+        captureVision.disabled = false;
+        captureVision.textContent = 'Capture Image';
+        closeVision.hidden = true;
+        captureVision.focus();
+      });
+      captureVision.addEventListener('click', () => {
+        clearTimeout(visionTimer);
+        visionModal.classList.add('analyzing');
+        captureVision.disabled = true;
+        captureVision.textContent = 'Analyzing…';
+        visionTimer = setTimeout(() => {
+          visionModal.classList.remove('analyzing');
+          document.getElementById('vision-results').hidden = false;
+          captureVision.hidden = true;
+          closeVision.hidden = false;
+          closeVision.focus();
+        }, 2000);
+      });
+      function closeVisionModal() {
+        clearTimeout(visionTimer);
+        visionBackdrop.hidden = true;
+        visionModal.classList.remove('analyzing');
+      }
+      closeVision.addEventListener('click', closeVisionModal);
+      visionBackdrop.addEventListener('click', event => { if (event.target === visionBackdrop) closeVisionModal(); });
+
+      const teleconsultModal = document.getElementById('teleconsult-modal');
+      const openTeleconsult = document.getElementById('open-teleconsult');
+      openTeleconsult.addEventListener('click', () => {
+        teleconsultModal.hidden = false;
+        document.getElementById('end-consultation').focus();
+      });
+      document.getElementById('end-consultation').addEventListener('click', () => {
+        teleconsultModal.hidden = true;
+        openTeleconsult.focus();
+      });
+
+      const dispenserModal = document.getElementById('dispenser-modal');
+      const openDispenser = document.getElementById('open-dispenser');
+      const closeDispenser = document.getElementById('close-dispenser');
+      const otpDisplay = document.getElementById('otp-display');
+      const verifyDispense = document.getElementById('verify-dispense');
+      const dispenseMedicine = document.getElementById('dispense-medicine');
+      const dispenseSuccess = document.getElementById('dispense-success');
+      const cosignState = document.getElementById('cosign-state');
+      const cosignCountdown = document.getElementById('cosign-countdown');
+      let enteredOtp = '';
+      let cosignTimer;
+      let cosignDeadline;
+      let dispenseTimers = [];
+
+      function renderOtp() {
+        otpDisplay.replaceChildren();
+        for (let index = 0; index < 6; index++) {
+          const digit = document.createElement('span');
+          digit.className = 'otp-digit';
+          digit.textContent = enteredOtp[index] || '·';
+          otpDisplay.appendChild(digit);
+        }
+        otpDisplay.setAttribute('aria-label', enteredOtp ? 'OTP entered: ' + enteredOtp.length + ' of 6 digits' : 'No OTP entered');
+        verifyDispense.disabled = enteredOtp !== '948201';
+      }
+
+      function startCosignCountdown() {
+        clearInterval(cosignTimer);
+        cosignState.textContent = 'Awaiting cloud co-signature…';
+        cosignState.classList.remove('approved');
+        document.getElementById('cosign-pharmacist').textContent = 'Dhadgaon Central Pharmacist';
+        cosignDeadline = Date.now() + 90000;
+        const tick = () => {
+          const secondsLeft = Math.max(0, Math.ceil((cosignDeadline - Date.now()) / 1000));
+          if (secondsLeft === 0) {
+            clearInterval(cosignTimer);
+            cosignState.textContent = 'Cloud Failover: Nashik Central Pharmacy Approved';
+            cosignState.classList.add('approved');
+            cosignCountdown.textContent = 'Cloud failover approved';
+            return;
+          }
+          const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+          const seconds = String(secondsLeft % 60).padStart(2, '0');
+          cosignCountdown.innerHTML = 'Cloud failover in <strong>' + minutes + ':' + seconds + '</strong>';
+        };
+        tick();
+        cosignTimer = setInterval(tick, 250);
+      }
+
+      openDispenser.addEventListener('click', () => {
+        dispenserModal.hidden = false;
+        enteredOtp = '';
+        renderOtp();
+        dispenseSuccess.hidden = true;
+        verifyDispense.disabled = true;
+        document.getElementById('dispenser-auth-content').hidden = false;
+        document.getElementById('dispense-sequence').hidden = true;
+        dispenseMedicine.hidden = true;
+        document.getElementById('dispense-complete').hidden = true;
+        document.getElementById('dispense-visual').hidden = false;
+        document.getElementById('laser-tray').hidden = true;
+        document.getElementById('coil-assembly').hidden = false;
+        document.getElementById('dispense-visual').classList.remove('stallguard', 'dropping');
+        document.getElementById('dispense-sequence-copy').classList.remove('stallguard-alert');
+        dispenseTimers.forEach(clearTimeout);
+        dispenseTimers = [];
+        startCosignCountdown();
+        closeDispenser.focus();
+      });
+      document.getElementById('otp-keypad').addEventListener('click', event => {
+        const key = event.target.closest('button');
+        if (!key) return;
+        if (key.dataset.digit && enteredOtp.length < 6) enteredOtp += key.dataset.digit;
+        else if (key.dataset.action === 'clear') enteredOtp = '';
+        else if (key.dataset.action === 'backspace') enteredOtp = enteredOtp.slice(0, -1);
+        renderOtp();
+      });
+      document.getElementById('autofill-otp').addEventListener('click', () => {
+        enteredOtp = '948201';
+        renderOtp();
+      });
+      verifyDispense.addEventListener('click', () => {
+        if (enteredOtp !== '948201') return;
+        dispenseSuccess.hidden = false;
+        verifyDispense.disabled = true;
+        dispenseMedicine.hidden = false;
+      });
+
+      dispenseMedicine.addEventListener('click', () => {
+        if (enteredOtp !== '948201' || dispenseMedicine.hidden) return;
+        document.getElementById('dispenser-auth-content').hidden = true;
+        document.getElementById('dispense-sequence').hidden = false;
+        document.getElementById('dispense-sequence-copy').textContent = 'NEMA 17 Stepper Motor: Rotating Coil...';
+        document.getElementById('dispense-sequence-copy').classList.remove('stallguard-alert');
+        document.getElementById('dispense-sequence-title').textContent = 'Mechanical Dispensing';
+        document.getElementById('dispense-visual').hidden = false;
+        document.getElementById('dispense-visual').classList.remove('stallguard', 'dropping');
+        document.getElementById('coil-assembly').hidden = false;
+        document.getElementById('laser-tray').hidden = true;
+        document.getElementById('motor-label').textContent = 'NEMA 17 · stepper motor controller';
+        document.getElementById('dispense-complete').hidden = true;
+
+        dispenseTimers.forEach(clearTimeout);
+        dispenseTimers = [
+          setTimeout(() => {
+            document.getElementById('dispense-sequence-copy').textContent = 'STALLGUARD ALERT: 1.3A Spike Detected. Executing 60° Reverse Clearing...';
+            document.getElementById('dispense-sequence-copy').classList.add('stallguard-alert');
+            document.getElementById('dispense-sequence-title').textContent = 'Anti-Jam Clearing';
+            document.getElementById('dispense-visual').classList.add('stallguard');
+            document.getElementById('motor-label').textContent = 'STALLGUARD · back-EMF current spike detected';
+          }, 2000),
+          setTimeout(() => {
+            document.getElementById('dispense-sequence-copy').textContent = 'OPTICAL CURTAIN: DROP CONFIRMED';
+            document.getElementById('dispense-sequence-copy').classList.remove('stallguard-alert');
+            document.getElementById('dispense-sequence-title').textContent = 'Medicine Drop Detected';
+            document.getElementById('coil-assembly').hidden = true;
+            document.getElementById('dispense-visual').classList.remove('stallguard');
+            document.getElementById('dispense-visual').classList.add('dropping');
+            document.getElementById('laser-tray').hidden = false;
+            document.getElementById('motor-label').textContent = 'OPTICAL CURTAIN · blister pack detected in retrieval tray';
+          }, 4000),
+          setTimeout(() => {
+            document.getElementById('dispense-visual').hidden = true;
+            document.getElementById('dispense-complete').hidden = false;
+            document.getElementById('dispense-sequence-title').textContent = 'Dispensing Complete';
+            document.getElementById('dispense-sequence-copy').textContent = '';
+            document.getElementById('return-dashboard').focus();
+          }, 5000)
+        ];
+      });
+
+      document.getElementById('return-dashboard').addEventListener('click', () => {
+        dispenseTimers.forEach(clearTimeout);
+        dispenseTimers = [];
+        clearInterval(cosignTimer);
+        dispenserModal.hidden = true;
+        kioskDashboard.hidden = false;
+        kioskChatSection.hidden = false;
+        openDispenser.focus();
+      });
+      function closeDispenserModal() {
+        dispenseTimers.forEach(clearTimeout);
+        dispenseTimers = [];
+        clearInterval(cosignTimer);
+        dispenserModal.hidden = true;
+        openDispenser.focus();
+      }
+      closeDispenser.addEventListener('click', closeDispenserModal);
+      dispenserModal.addEventListener('click', event => { if (event.target === dispenserModal) closeDispenserModal(); });
+
+      const chatForm = document.getElementById('chat-form');
+      const chatInput = document.getElementById('chat-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const typingIndicator = document.getElementById('typing-indicator');
+      const chatMic = document.getElementById('chat-mic');
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition;
+      if (Recognition) {
+        recognition = new Recognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.onstart = () => {
+          chatMic.setAttribute('aria-pressed', 'true');
+          chatMic.setAttribute('aria-label', 'Stop voice input');
+          chatMic.title = 'Listening… click to stop';
+          chatMic.dataset.previousValue = chatInput.value;
+        };
+        recognition.onresult = event => {
+          let transcript = '';
+          for (let index = 0; index < event.results.length; index++) transcript += event.results[index][0].transcript;
+          chatInput.value = transcript.trim();
+        };
+        recognition.onerror = event => {
+          if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            chatMessages.setAttribute('aria-label', 'Chat messages. Voice input error: ' + event.error);
+          }
+        };
+        recognition.onend = () => {
+          chatMic.setAttribute('aria-pressed', 'false');
+          chatMic.setAttribute('aria-label', 'Start voice input');
+          chatMic.title = 'Speak your message';
+          if (!chatInput.value.trim() && chatMic.dataset.previousValue) chatInput.value = chatMic.dataset.previousValue;
+        };
+        chatMic.addEventListener('click', () => {
+          if (chatMic.getAttribute('aria-pressed') === 'true') {
+            recognition.stop();
+            return;
+          }
+          recognition.lang = speechLanguage[selectedDialect] || 'en-IN';
+          try { recognition.start(); }
+          catch (error) { chatMessages.setAttribute('aria-label', 'Chat messages. Voice input could not start.'); }
+        });
+      } else {
+        chatMic.disabled = true;
+        chatMic.title = 'Speech recognition is unavailable in this browser';
+        chatMic.setAttribute('aria-label', 'Voice input unavailable in this browser');
+      }
+
+      function speakReply(text) {
+        if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) return;
+        const language = speechLanguage[selectedDialect] || 'en-IN';
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const baseLanguage = language.split('-')[0].toLowerCase();
+        const dialectVoice = voices.find(voice => voice.lang.toLowerCase() === language.toLowerCase())
+          || voices.find(voice => voice.lang.toLowerCase().startsWith(baseLanguage + '-'));
+        const englishVoice = voices.find(voice => voice.lang.toLowerCase().startsWith('en-'));
+        utterance.voice = dialectVoice || englishVoice || null;
+        utterance.lang = dialectVoice ? language : (englishVoice ? englishVoice.lang : 'en-IN');
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      }
+
+      const droneTelemetry = { altitude: 290, speed: 85, temperature: 3.8 };
+      function fluctuation(value, minimum, maximum, increment) {
+        const next = value + (Math.random() < 0.5 ? -increment : increment);
+        return Math.max(minimum, Math.min(maximum, next));
+      }
+      setInterval(() => {
+        droneTelemetry.altitude = fluctuation(droneTelemetry.altitude, 288, 292, 1);
+        droneTelemetry.speed = fluctuation(droneTelemetry.speed, 83, 87, 1);
+        droneTelemetry.temperature = Math.round(fluctuation(droneTelemetry.temperature, 3.6, 4.0, 0.1) * 10) / 10;
+        document.getElementById('drone-altitude').textContent = droneTelemetry.altitude;
+        document.getElementById('drone-speed').textContent = droneTelemetry.speed;
+        document.getElementById('vault-temperature').textContent = droneTelemetry.temperature.toFixed(1);
+        const coldRangeOkay = droneTelemetry.temperature >= 2 && droneTelemetry.temperature <= 8;
+        const coldBadge = document.getElementById('vault-status');
+        coldBadge.textContent = coldRangeOkay ? 'Stable · 2–8°C' : 'Out of range';
+        coldBadge.style.color = coldRangeOkay ? '' : '#ff858b';
+      }, 1000);
+
+      chatForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        const userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.textContent = message;
+        chatMessages.insertBefore(userMessage, typingIndicator);
+        chatInput.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatInput.focus();
+
+        function appendAssistantReply(text) {
+          typingIndicator.hidden = true;
+          const reply = document.createElement('div');
+          reply.className = 'chat-message';
+          reply.textContent = text;
+          chatMessages.insertBefore(reply, typingIndicator);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          speakReply(reply.textContent);
+        }
+
+        if (!networkOnline) {
+          const lowerMessage = message.toLowerCase();
+          const offlineRules = [
+            { keywords: ['snakebite', 'snake bite', 'सर्पदंश', 'साप चावला'], response: 'Do not move the limb. Keep it below heart level. Emergency drone dispatched.' },
+            { keywords: ['dehydration', 'डिहाइड्रेशन', 'निर्जलीकरण', 'पाण्याची कमतरता'], response: 'Drink ORS solution immediately.' },
+            { keywords: ['fever', 'बुखार', 'ताप', 'ज्वर'], response: 'Drink water, take Paracetamol, monitor temperature.' }
+          ];
+          const matchedRule = offlineRules.find(rule => rule.keywords.some(keyword => lowerMessage.includes(keyword)));
+          appendAssistantReply(matchedRule ? matchedRule.response : 'I am offline. Please connect to the network or consult the Sanchalak.');
+          return;
+        }
+
+        typingIndicator.hidden = false;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        const onlineMessage = message.toLowerCase();
+        const onlineRules = [
+          {
+            keywords: ['chest pain', 'heart'],
+            response: 'Chest pain is serious. I am monitoring your ECG. If you feel severe pain, I will activate the Emergency Golden Hour Protocol.'
+          },
+          {
+            keywords: ['fever'],
+            response: 'I understand you have a fever. Please use the Temperature and BP cards to record your vitals. Have you been experiencing chills?'
+          },
+          {
+            keywords: ['cough'],
+            response: 'A persistent cough could be related to indoor smoke. Please use the Digital Stethoscope module so I can analyze your breath sounds.'
+          },
+          {
+            keywords: ['pain', 'headache'],
+            response: "I'm sorry you're in pain. Let's check your Blood Pressure first. Please click the Start Cuff button."
+          }
+        ];
+        const onlineMatch = onlineRules.find(rule => rule.keywords.some(keyword => onlineMessage.includes(keyword)));
+        const onlineReply = onlineMatch
+          ? onlineMatch.response
+          : 'I can help with that. Can you tell me more about your symptoms? You can also ask me about fever, cough, or pain.';
+        window.setTimeout(() => appendAssistantReply(onlineReply), 1000);
+      });
+    })();
+  </script>
+</body>
+</html>
